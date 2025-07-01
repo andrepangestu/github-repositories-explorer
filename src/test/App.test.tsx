@@ -3,33 +3,28 @@ import { render, screen } from "@testing-library/react";
 import App from "../App";
 
 describe("App Component", () => {
-  it("renders the main heading", () => {
-    render(<App />);
-
-    const heading = screen.getByRole("heading", {
-      name: /github repositories explorer/i,
-    });
-
-    expect(heading).toBeInTheDocument();
-  });
-
   it("renders the search input", () => {
     render(<App />);
 
-    const searchInput = screen.getByRole("textbox", {
-      name: /search github users/i,
-    });
-
+    const searchInput = screen.getByRole("textbox");
     expect(searchInput).toBeInTheDocument();
+    expect(searchInput).toHaveAttribute("placeholder", "Enter username");
   });
 
-  it("shows get started message initially", () => {
+  it("renders the search button", () => {
     render(<App />);
 
-    const getStartedHeading = screen.getByRole("heading", {
-      name: /get started/i,
-    });
+    const searchButton = screen.getByRole("button", { name: /search/i });
+    expect(searchButton).toBeInTheDocument();
+  });
 
-    expect(getStartedHeading).toBeInTheDocument();
+  it("has proper form structure", () => {
+    render(<App />);
+
+    const searchInput = screen.getByRole("textbox");
+    const searchButton = screen.getByRole("button", { name: /search/i });
+
+    expect(searchInput).toHaveAttribute("aria-label", "Enter GitHub username");
+    expect(searchButton).toHaveAttribute("type", "submit");
   });
 });

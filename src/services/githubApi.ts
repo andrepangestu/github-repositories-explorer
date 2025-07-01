@@ -1,164 +1,163 @@
-import axios from "axios";
+import axios, { type AxiosInstance } from "axios";
 import type {
   GitHubUser,
   GitHubRepository,
   SearchUsersResponse,
+  AppError,
 } from "../types/github";
 
-const GITHUB_API_BASE_URL = "https://api.github.com";
-
-// Create axios instance with default config
-const githubApi = axios.create({
-  baseURL: GITHUB_API_BASE_URL,
+const API_CONFIG = {
+  baseURL: "https://api.github.com",
   timeout: 10000,
   headers: {
     Accept: "application/vnd.github.v3+json",
     "User-Agent": "GitHub-Repositories-Explorer",
   },
-});
+} as const;
 
-export class GitHubApiService {
-  /**
-   * Search for GitHub users by username
-   * @param query The search query (username)
-   * @param limit Maximum number of results to return (default: 5)
-   * @returns Promise with array of users
-   */
-  static async searchUsers(
-    query: string,
-    limit: number = 5
-  ): Promise<GitHubUser[]> {
-    if (!query.trim()) {
-      return [];
-    }
+const SEARCH_CONFIG = {
+  maxResults: 5,
+  maxReposPerPage: 100,
+} as const;
 
+class GitHubApiClient {
+  private readonly client: AxiosInstance;
+
+  constructor() {
+    this.client = axios.create(API_CONFIG);
+  }
+
+  async get<T>(url: string, params?: Record<string, unknown>): Promise<T> {
     try {
-      const response = await githubApi.get<SearchUsersResponse>(
-        "/search/users",
-        {
-          params: {
-            q: query,
-            per_page: limit,
-            sort: "followers",
-            order: "desc",
-          },
-        }
-      );
-
-      return response.data.items;
+      const response = await this.client.get<T>(url, { params });
+      return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 403) {
-          throw new Error(
-            "GitHub API rate limit exceeded. Please try again later."
-          );
-        }
-        if (error.response?.status === 422) {
-          throw new Error("Invalid search query. Please check your input.");
-        }
-        throw new Error(
-          `GitHub API error: ${error.response?.data?.message ?? error.message}`
-        );
-      }
-      throw new Error(
-        "Failed to search users. Please check your internet connection."
-      );
+      throw this.handleError(error);
     }
   }
 
-  /**
-   * Get repositories for a specific user
-   * @param username The GitHub username
-   * @returns Promise with array of repositories
-   */
+  private handleError(error: unknown): AppError {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const message = error.response?.data?.message ?? error.message;
+
+      switch (status) {
+        case 403:
+          return {
+            message: "GitHub API rate limit exceeded. Please try again later.",
+            status,
+            type: "API_ERROR",
+          };
+        case 404:
+          return {
+            message: "Resource not found.",
+            status,
+            type: "NOT_FOUND",
+          };
+        case 422:
+          return {
+            message: "Invalid request. Please check your input.",
+            status,
+            type: "VALIDATION_ERROR",
+          };
+        default:
+          return {
+            message: `GitHub API error: ${message}`,
+            status,
+            type: "API_ERROR",
+          };
+      }
+    }
+
+    return {
+      message: "Network error. Please check your internet connection.",
+      type: "NETWORK_ERROR",
+    };
+  }
+}
+
+const apiClient = new GitHubApiClient();
+
+function validateSearchQuery(query: string): string {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    throw new Error("Search query cannot be empty");
+  }
+  if (trimmed.length > 256) {
+    throw new Error("Search query is too long");
+  }
+  return trimmed;
+}
+
+function validateSearchLimit(limit: number): number {
+  if (limit < 1 || limit > 100) {
+    throw new Error("Search limit must be between 1 and 100");
+  }
+  return limit;
+}
+
+export async function searchUsers(
+  query: string,
+  limit: number = SEARCH_CONFIG.maxResults
+): Promise<GitHubUser[]> {
+  const validQuery = validateSearchQuery(query);
+  const validLimit = validateSearchLimit(limit);
+
+  const response = await apiClient.get<SearchUsersResponse>("/search/users", {
+    q: validQuery,
+    per_page: validLimit,
+    sort: "followers",
+    order: "desc",
+  });
+
+  return response.items;
+}
+
+export async function getUserRepositories(
+  username: string
+): Promise<GitHubRepository[]> {
+  const trimmedUsername = username.trim();
+  if (!trimmedUsername) {
+    throw new Error("Username cannot be empty");
+  }
+
+  const repositories: GitHubRepository[] = [];
+  let page = 1;
+  let hasMorePages = true;
+
+  while (hasMorePages) {
+    const pageRepos = await apiClient.get<GitHubRepository[]>(
+      `/users/${trimmedUsername}/repos`,
+      {
+        sort: "updated",
+        direction: "desc",
+        per_page: SEARCH_CONFIG.maxReposPerPage,
+        type: "public",
+        page,
+      }
+    );
+
+    repositories.push(...pageRepos);
+
+    hasMorePages = pageRepos.length === SEARCH_CONFIG.maxReposPerPage;
+    page++;
+  }
+
+  return repositories;
+}
+
+// Legacy support - keep the class interface for backward compatibility
+export class GitHubApiService {
+  static async searchUsers(
+    query: string,
+    limit?: number
+  ): Promise<GitHubUser[]> {
+    return searchUsers(query, limit);
+  }
+
   static async getUserRepositories(
     username: string
   ): Promise<GitHubRepository[]> {
-    if (!username.trim()) {
-      return [];
-    }
-
-    try {
-      let allRepositories: GitHubRepository[] = [];
-      let page = 1;
-      const perPage = 100; // GitHub API maximum per page
-
-      while (true) {
-        const response = await githubApi.get<GitHubRepository[]>(
-          `/users/${username}/repos`,
-          {
-            params: {
-              sort: "updated",
-              direction: "desc",
-              per_page: perPage,
-              type: "public",
-              page: page,
-            },
-          }
-        );
-
-        const repositories = response.data;
-        allRepositories = [...allRepositories, ...repositories];
-
-        // If we got less than perPage results, we've reached the end
-        if (repositories.length < perPage) {
-          break;
-        }
-
-        page++;
-      }
-
-      return allRepositories;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 404) {
-          throw new Error(`User "${username}" not found.`);
-        }
-        if (error.response?.status === 403) {
-          throw new Error(
-            "GitHub API rate limit exceeded. Please try again later."
-          );
-        }
-        throw new Error(
-          `GitHub API error: ${error.response?.data?.message ?? error.message}`
-        );
-      }
-      throw new Error(
-        "Failed to fetch repositories. Please check your internet connection."
-      );
-    }
-  }
-
-  /**
-   * Get user details by username
-   * @param username The GitHub username
-   * @returns Promise with user details
-   */
-  static async getUser(username: string): Promise<GitHubUser> {
-    if (!username.trim()) {
-      throw new Error("Username is required");
-    }
-
-    try {
-      const response = await githubApi.get<GitHubUser>(`/users/${username}`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 404) {
-          throw new Error(`User "${username}" not found.`);
-        }
-        if (error.response?.status === 403) {
-          throw new Error(
-            "GitHub API rate limit exceeded. Please try again later."
-          );
-        }
-        throw new Error(
-          `GitHub API error: ${error.response?.data?.message ?? error.message}`
-        );
-      }
-      throw new Error(
-        "Failed to fetch user details. Please check your internet connection."
-      );
-    }
+    return getUserRepositories(username);
   }
 }

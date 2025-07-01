@@ -1,3 +1,10 @@
+// =============================================================================
+// GitHub API Types
+// =============================================================================
+
+/**
+ * Represents a GitHub user from the API
+ */
 export interface GitHubUser {
   id: number;
   login: string;
@@ -13,6 +20,9 @@ export interface GitHubUser {
   created_at: string;
 }
 
+/**
+ * Represents a GitHub repository from the API
+ */
 export interface GitHubRepository {
   id: number;
   name: string;
@@ -30,18 +40,24 @@ export interface GitHubRepository {
   default_branch: string;
 }
 
+/**
+ * GitHub search users API response structure
+ */
 export interface SearchUsersResponse {
   total_count: number;
   incomplete_results: boolean;
   items: GitHubUser[];
 }
 
-export interface ApiError {
+// =============================================================================
+// Application Types
+// =============================================================================
+
+/**
+ * Standardized error structure for the application
+ */
+export interface AppError {
   message: string;
   status?: number;
-}
-
-export interface LoadingState {
-  isSearchingUsers: boolean;
-  isLoadingRepos: boolean;
+  type: "NETWORK_ERROR" | "API_ERROR" | "VALIDATION_ERROR" | "NOT_FOUND";
 }

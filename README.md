@@ -109,7 +109,7 @@ Before running this project, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/github-repositories-explorer.git
+git clone https://github.com/andrepangestu/github-repositories-explorer.git
 cd github-repositories-explorer
 ```
 
@@ -127,7 +127,7 @@ npm run dev
 
 ### 4. Open in Browser
 
-Navigate to `http://localhost:5173` in your browser.
+Navigate to `http://localhost:3000` in browser.
 
 ## 📝 Available Scripts
 
@@ -294,9 +294,9 @@ This project is configured for automatic deployment to GitHub Pages using GitHub
 
 **Automatic Deployment:**
 
-1. Push your code to the `main` branch
-2. GitHub Actions will automatically build and deploy your site
-3. Your site will be available at: `https://andrepangestu.github.io/github-repositories-explorer`
+1. Push code to the `main` branch
+2. GitHub Actions will automatically build and deploy to site
+3. The site will be available at: `https://andrepangestu.github.io/github-repositories-explorer`
 
 **Manual Deployment:**
 
@@ -304,14 +304,6 @@ This project is configured for automatic deployment to GitHub Pages using GitHub
 # Deploy to GitHub Pages manually
 npm run deploy
 ```
-
-**Setup Requirements:**
-
-1. Enable GitHub Pages in your repository settings
-2. Set source to "GitHub Actions"
-3. Ensure the repository is public or you have GitHub Pro
-
-````
 
 ## 🐛 Troubleshooting
 
@@ -325,7 +317,7 @@ npx kill-port 5173
 
 # Or use different port
 npm run dev -- --port 3000
-````
+```
 
 #### Dependencies Issues
 
