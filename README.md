@@ -288,18 +288,30 @@ This creates an optimized build in the `dist/` directory.
 
 ### Deployment Options
 
-#### GitHub Pages
+#### GitHub Pages (Recommended)
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+
+**Automatic Deployment:**
+
+1. Push your code to the `main` branch
+2. GitHub Actions will automatically build and deploy your site
+3. Your site will be available at: `https://andrepangestu.github.io/github-repositories-explorer`
+
+**Manual Deployment:**
 
 ```bash
-# Install gh-pages
-npm install --save-dev gh-pages
-
-# Add to package.json scripts
-"deploy": "gh-pages -d dist"
-
-# Deploy
-npm run build && npm run deploy
+# Deploy to GitHub Pages manually
+npm run deploy
 ```
+
+**Setup Requirements:**
+
+1. Enable GitHub Pages in your repository settings
+2. Set source to "GitHub Actions"
+3. Ensure the repository is public or you have GitHub Pro
+
+````
 
 ## 🐛 Troubleshooting
 
@@ -313,7 +325,7 @@ npx kill-port 5173
 
 # Or use different port
 npm run dev -- --port 3000
-```
+````
 
 #### Dependencies Issues
 
