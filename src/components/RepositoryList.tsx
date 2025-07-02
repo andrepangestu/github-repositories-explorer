@@ -23,9 +23,9 @@ export const RepositoryList: React.FC<RepositoryListProps> = React.memo(
     };
 
     return (
-      <div className="space-y-3">
+      <ul className="space-y-3 list-none p-0 m-0" data-testid="repository-list">
         {repositories.map((repo) => (
-          <div key={repo.id} className="bg-gray-50 p-3 rounded-md">
+          <li key={repo.id} className="bg-gray-50 p-3 rounded-md">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0 pr-4">
                 <button
@@ -33,6 +33,7 @@ export const RepositoryList: React.FC<RepositoryListProps> = React.memo(
                   onClick={() => handleRepositoryClick(repo.html_url)}
                   title={`Open ${repo.name} on GitHub`}
                   type="button"
+                  aria-label={`Open ${repo.name} on GitHub`}
                 >
                   {repo.name}
                 </button>
@@ -47,12 +48,15 @@ export const RepositoryList: React.FC<RepositoryListProps> = React.memo(
                 <span className="font-bold text-sm text-gray-900">
                   {formatNumber(repo.stargazers_count)}
                 </span>
-                <Star className="h-4 w-4 text-black fill-current" />
+                <Star
+                  className="h-4 w-4 text-black fill-current"
+                  data-testid="star-icon"
+                />
               </div>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     );
   }
 );

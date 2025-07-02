@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { vi } from "vitest";
+import { vi, beforeEach } from "vitest";
 
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
@@ -8,8 +8,8 @@ Object.defineProperty(window, "matchMedia", {
     matches: false,
     media: query,
     onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
@@ -23,26 +23,38 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Mock Clipboard API with proper configuration
-if (!navigator.clipboard) {
-  Object.defineProperty(navigator, "clipboard", {
-    value: {
-      writeText: vi.fn().mockImplementation(() => Promise.resolve()),
-      readText: vi.fn().mockImplementation(() => Promise.resolve("")),
-    },
-    writable: true,
-    configurable: true, // This is important - allows redefining
-  });
-}
+// Mock IntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
 
-// Mock other navigator properties that might be needed
-Object.defineProperty(navigator, "userAgent", {
-  value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+// Mock window.open for repository link tests
+Object.defineProperty(window, "open", {
   writable: true,
-  configurable: true,
+  value: vi.fn(),
 });
 
-// Add vi to global scope for tests
-declare global {
-  const vi: typeof import("vitest").vi;
-}
+// Global beforeEach to clear mocks
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+// Mock axios globally
+export const mockAxiosInstance = {
+  get: vi.fn(() => Promise.resolve({ data: {} })),
+  post: vi.fn(() => Promise.resolve({ data: {} })),
+  put: vi.fn(() => Promise.resolve({ data: {} })),
+  delete: vi.fn(() => Promise.resolve({ data: {} })),
+};
+
+export const mockAxios = {
+  create: vi.fn(() => mockAxiosInstance),
+  isAxiosError: vi.fn(() => false),
+};
+
+vi.mock("axios", () => ({
+  default: mockAxios,
+  ...mockAxios,
+}));

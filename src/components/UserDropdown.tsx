@@ -32,9 +32,15 @@ export const UserDropdown: React.FC<UserDropdownProps> = React.memo(
           <div className="flex items-center justify-between">
             <span className="text-gray-900 font-semibold">{user.login}</span>
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
+              <ChevronUp
+                className="h-4 w-4 text-gray-500"
+                data-testid="chevron-up"
+              />
             ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
+              <ChevronDown
+                className="h-4 w-4 text-gray-500"
+                data-testid="chevron-down"
+              />
             )}
           </div>
         </button>

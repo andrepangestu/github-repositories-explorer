@@ -1,296 +1,204 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import axios from "axios";
+import { GithubApiService } from "../../services/githubApi";
 import {
-  searchUsers,
-  getUserRepositories,
-  GithubApiService,
-} from "../../services/githubApi";
-import type { GithubRepository, SearchUsersResponse } from "../../types/github";
+  createMockUser,
+  createMockRepository,
+  createMockSearchResponse,
+} from "../test-utils";
 
-// Mock the entire services module
-vi.mock("../../services/githubApi", async () => {
-  const actual = await vi.importActual("../../services/githubApi");
+// Mock axios module completely
+vi.mock("axios", () => {
+  const mockAxiosInstance = {
+    get: vi.fn(),
+  };
+
+  const mockIsAxiosError = vi.fn();
+
   return {
-    ...actual,
-    searchUsers: vi.fn(),
-    getUserRepositories: vi.fn(),
-    GithubApiService: {
-      searchUsers: vi.fn(),
-      getUserRepositories: vi.fn(),
+    default: {
+      create: vi.fn(() => mockAxiosInstance),
+      isAxiosError: mockIsAxiosError,
     },
   };
 });
 
-const mockSearchUsers = vi.mocked(searchUsers);
-const mockGetUserRepositories = vi.mocked(getUserRepositories);
-const mockGithubApiService = vi.mocked(GithubApiService);
+const mockAxios = vi.mocked(axios);
 
-const mockSearchResponse: SearchUsersResponse = {
-  total_count: 2,
-  incomplete_results: false,
-  items: [
-    {
-      id: 1,
-      login: "testuser1",
-      avatar_url: "https://avatars.githubusercontent.com/u/1?v=4",
-      html_url: "https://github.com/testuser1",
-      type: "User",
-      name: "Test User 1",
-      bio: "First test user",
-      location: "Test City",
-      public_repos: 10,
-      followers: 100,
-      following: 50,
-      created_at: "2020-01-01T00:00:00Z",
-    },
-    {
-      id: 2,
-      login: "testuser2",
-      avatar_url: "https://avatars.githubusercontent.com/u/2?v=4",
-      html_url: "https://github.com/testuser2",
-      type: "User",
-      name: "Test User 2",
-      bio: "Second test user",
-      location: "Test City 2",
-      public_repos: 5,
-      followers: 50,
-      following: 25,
-      created_at: "2020-02-01T00:00:00Z",
-    },
-  ],
-};
+describe("GithubApiService", () => {
+  let mockAxiosInstance: {
+    get: Mock;
+  };
+  let mockIsAxiosError: Mock;
 
-const mockRepositories: GithubRepository[] = [
-  {
-    id: 1,
-    name: "test-repo-1",
-    full_name: "testuser1/test-repo-1",
-    description: "A test repository",
-    html_url: "https://github.com/testuser1/test-repo-1",
-    stargazers_count: 42,
-    watchers_count: 10,
-    forks_count: 5,
-    language: "TypeScript",
-    updated_at: "2023-12-01T10:00:00Z",
-    created_at: "2023-01-01T10:00:00Z",
-    topics: ["test", "typescript"],
-    visibility: "public",
-    default_branch: "main",
-  },
-  {
-    id: 2,
-    name: "another-repo",
-    full_name: "testuser1/another-repo",
-    description: "Another test repository",
-    html_url: "https://github.com/testuser1/another-repo",
-    stargazers_count: 15,
-    watchers_count: 3,
-    forks_count: 2,
-    language: "JavaScript",
-    updated_at: "2023-11-15T14:30:00Z",
-    created_at: "2023-06-01T09:15:00Z",
-    topics: ["javascript", "node"],
-    visibility: "public",
-    default_branch: "master",
-  },
-];
-
-describe("GitHub API Service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
 
-  afterEach(() => {
-    vi.resetAllMocks();
+    // Get the mock axios instance that was created in the mock
+    mockAxiosInstance = (mockAxios.create as Mock)();
+    mockIsAxiosError = mockAxios.isAxiosError as unknown as Mock;
+
+    // Reset the mock functions
+    mockAxiosInstance.get.mockReset();
+    mockIsAxiosError.mockReturnValue(false);
   });
 
   describe("searchUsers", () => {
-    it("searches for users successfully", async () => {
-      mockSearchUsers.mockResolvedValue(mockSearchResponse.items);
+    it("should search for users successfully", async () => {
+      const mockUsers = [
+        createMockUser(),
+        createMockUser({ id: 2, login: "testuser2" }),
+      ];
+      const mockResponse = createMockSearchResponse(mockUsers);
 
-      const result = await searchUsers("testuser");
+      mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
 
-      expect(result).toEqual(mockSearchResponse.items);
-      expect(mockSearchUsers).toHaveBeenCalledWith("testuser");
+      const result = await GithubApiService.searchUsers("testuser", 5);
+
+      expect(result).toEqual(mockUsers);
     });
 
-    it("uses custom limit parameter", async () => {
-      mockSearchUsers.mockResolvedValue(mockSearchResponse.items);
+    it("should handle empty search results", async () => {
+      const mockResponse = createMockSearchResponse([]);
 
-      await searchUsers("testuser", 10);
+      mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
 
-      expect(mockSearchUsers).toHaveBeenCalledWith("testuser", 10);
+      const result = await GithubApiService.searchUsers("nonexistent", 5);
+      expect(result).toEqual([]);
     });
 
-    it("handles empty search query", async () => {
-      const error = new Error("Search query cannot be empty");
-      mockSearchUsers.mockRejectedValue(error);
-
-      await expect(searchUsers("")).rejects.toThrow(
+    it("should validate search query - empty string", async () => {
+      await expect(GithubApiService.searchUsers("")).rejects.toThrow(
         "Search query cannot be empty"
       );
     });
 
-    it("handles API errors", async () => {
-      const apiError = {
-        message: "API rate limit exceeded",
-        status: 403,
-        type: "API_ERROR",
-      };
-      mockSearchUsers.mockRejectedValue(apiError);
-
-      await expect(searchUsers("test")).rejects.toMatchObject(apiError);
+    it("should validate search query - whitespace only", async () => {
+      await expect(GithubApiService.searchUsers("   ")).rejects.toThrow(
+        "Search query cannot be empty"
+      );
     });
 
-    it("handles network errors", async () => {
-      const networkError = {
-        message: "Network error. Please check your internet connection.",
-        type: "NETWORK_ERROR",
-      };
-      mockSearchUsers.mockRejectedValue(networkError);
+    it("should validate search query - too long", async () => {
+      const longQuery = "a".repeat(257);
+      await expect(GithubApiService.searchUsers(longQuery)).rejects.toThrow(
+        "Search query is too long"
+      );
+    });
 
-      await expect(searchUsers("test")).rejects.toMatchObject(networkError);
+    it("should validate search limit - below minimum", async () => {
+      await expect(GithubApiService.searchUsers("testuser", 0)).rejects.toThrow(
+        "Search limit must be between 1 and 100"
+      );
+    });
+
+    it("should validate search limit - above maximum", async () => {
+      await expect(
+        GithubApiService.searchUsers("testuser", 101)
+      ).rejects.toThrow("Search limit must be between 1 and 100");
+    });
+
+    it("should handle API rate limit error (403)", async () => {
+      const error = new Error("API rate limit exceeded");
+      (
+        error as Error & {
+          response?: { status: number; data: { message: string } };
+        }
+      ).response = {
+        status: 403,
+        data: { message: "API rate limit exceeded" },
+      };
+
+      mockAxiosInstance.get.mockRejectedValue(error);
+      (mockAxios.isAxiosError as Mock).mockReturnValue(true);
+
+      await expect(GithubApiService.searchUsers("testuser")).rejects.toThrow(
+        "Github API rate limit exceeded. Please try again later."
+      );
+    });
+
+    it("should handle network errors", async () => {
+      const error = new Error("Network Error");
+
+      mockAxiosInstance.get.mockRejectedValue(error);
+      (mockAxios.isAxiosError as Mock).mockReturnValue(false);
+
+      await expect(GithubApiService.searchUsers("testuser")).rejects.toThrow(
+        "Network error. Please check your internet connection."
+      );
     });
   });
 
   describe("getUserRepositories", () => {
-    it("fetches user repositories successfully", async () => {
-      mockGetUserRepositories.mockResolvedValue(mockRepositories);
+    it("should get user repositories successfully", async () => {
+      const mockRepos = [
+        createMockRepository(),
+        createMockRepository({ id: 2, name: "test-repo-2" }),
+      ];
 
-      const result = await getUserRepositories("testuser1");
+      mockAxiosInstance.get.mockResolvedValue({ data: mockRepos });
 
-      expect(result).toEqual(mockRepositories);
-      expect(mockGetUserRepositories).toHaveBeenCalledWith("testuser1");
+      const result = await GithubApiService.getUserRepositories("testuser");
+
+      expect(result).toEqual(mockRepos);
     });
 
-    it("handles empty username", async () => {
-      const error = new Error("Username cannot be empty");
-      mockGetUserRepositories.mockRejectedValue(error);
+    it("should handle empty repository list", async () => {
+      mockAxiosInstance.get.mockResolvedValue({ data: [] });
 
-      await expect(getUserRepositories("")).rejects.toThrow(
+      const result = await GithubApiService.getUserRepositories("testuser");
+      expect(result).toEqual([]);
+    });
+
+    it("should handle pagination for large repository lists", async () => {
+      const firstPageRepos = Array.from({ length: 100 }, (_, i) =>
+        createMockRepository({ id: i + 1, name: `repo-${i + 1}` })
+      );
+      const secondPageRepos = Array.from({ length: 50 }, (_, i) =>
+        createMockRepository({ id: i + 101, name: `repo-${i + 101}` })
+      );
+
+      mockAxiosInstance.get
+        .mockResolvedValueOnce({ data: firstPageRepos }) // First page (100 items)
+        .mockResolvedValueOnce({ data: secondPageRepos }); // Second page (50 items)
+
+      const result = await GithubApiService.getUserRepositories("testuser");
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledTimes(2);
+      expect(result).toHaveLength(150);
+      expect(result[0]).toEqual(firstPageRepos[0]);
+      expect(result[149]).toEqual(secondPageRepos[49]);
+    });
+
+    it("should validate username - empty string", async () => {
+      await expect(GithubApiService.getUserRepositories("")).rejects.toThrow(
         "Username cannot be empty"
       );
     });
 
-    it("handles user not found", async () => {
-      const notFoundError = {
-        message: "Resource not found.",
+    it("should validate username - whitespace only", async () => {
+      await expect(GithubApiService.getUserRepositories("   ")).rejects.toThrow(
+        "Username cannot be empty"
+      );
+    });
+
+    it("should handle API errors for repository fetch", async () => {
+      const error = new Error("User not found");
+      (
+        error as Error & {
+          response?: { status: number; data: { message: string } };
+        }
+      ).response = {
         status: 404,
-        type: "NOT_FOUND",
+        data: { message: "Not Found" },
       };
-      mockGetUserRepositories.mockRejectedValue(notFoundError);
+
+      mockAxiosInstance.get.mockRejectedValue(error);
+      (mockAxios.isAxiosError as Mock).mockReturnValue(true);
 
       await expect(
-        getUserRepositories("nonexistentuser")
-      ).rejects.toMatchObject(notFoundError);
-    });
-
-    it("handles API errors for repository fetching", async () => {
-      const apiError = {
-        message: "Github API error: Server error",
-        status: 500,
-        type: "API_ERROR",
-      };
-      mockGetUserRepositories.mockRejectedValue(apiError);
-
-      await expect(getUserRepositories("testuser")).rejects.toMatchObject(
-        apiError
-      );
-    });
-  });
-
-  describe("GithubApiService (Legacy Interface)", () => {
-    it("provides backward compatibility for searchUsers", async () => {
-      mockGithubApiService.searchUsers.mockResolvedValue(
-        mockSearchResponse.items
-      );
-
-      const result = await GithubApiService.searchUsers("testuser");
-
-      expect(result).toEqual(mockSearchResponse.items);
-      expect(mockGithubApiService.searchUsers).toHaveBeenCalledWith("testuser");
-    });
-
-    it("provides backward compatibility for getUserRepositories", async () => {
-      mockGithubApiService.getUserRepositories.mockResolvedValue(
-        mockRepositories
-      );
-
-      const result = await GithubApiService.getUserRepositories("testuser1");
-
-      expect(result).toEqual(mockRepositories);
-      expect(mockGithubApiService.getUserRepositories).toHaveBeenCalledWith(
-        "testuser1"
-      );
-    });
-  });
-
-  describe("Error Handling", () => {
-    it("handles rate limit errors gracefully", async () => {
-      const rateLimitError = {
-        message: "Github API rate limit exceeded. Please try again later.",
-        status: 403,
-        type: "API_ERROR",
-      };
-      mockSearchUsers.mockRejectedValue(rateLimitError);
-
-      await expect(searchUsers("test")).rejects.toMatchObject(rateLimitError);
-    });
-
-    it("handles validation errors", async () => {
-      const validationError = {
-        message: "Invalid request. Please check your input.",
-        status: 422,
-        type: "VALIDATION_ERROR",
-      };
-      mockSearchUsers.mockRejectedValue(validationError);
-
-      await expect(searchUsers("test")).rejects.toMatchObject(validationError);
-    });
-
-    it("handles server errors", async () => {
-      const serverError = {
-        message: "Github API error: Internal Server Error",
-        status: 500,
-        type: "API_ERROR",
-      };
-      mockGetUserRepositories.mockRejectedValue(serverError);
-
-      await expect(getUserRepositories("test")).rejects.toMatchObject(
-        serverError
-      );
-    });
-  });
-
-  describe("API Response Validation", () => {
-    it("returns valid user data structure", async () => {
-      mockSearchUsers.mockResolvedValue(mockSearchResponse.items);
-
-      const result = await searchUsers("testuser");
-
-      expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      if (result.length > 0) {
-        expect(result[0]).toHaveProperty("id");
-        expect(result[0]).toHaveProperty("login");
-        expect(result[0]).toHaveProperty("avatar_url");
-        expect(result[0]).toHaveProperty("html_url");
-      }
-    });
-
-    it("returns valid repository data structure", async () => {
-      mockGetUserRepositories.mockResolvedValue(mockRepositories);
-
-      const result = await getUserRepositories("testuser1");
-
-      expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
-      if (result.length > 0) {
-        expect(result[0]).toHaveProperty("id");
-        expect(result[0]).toHaveProperty("name");
-        expect(result[0]).toHaveProperty("full_name");
-        expect(result[0]).toHaveProperty("html_url");
-        expect(result[0]).toHaveProperty("stargazers_count");
-      }
+        GithubApiService.getUserRepositories("nonexistent")
+      ).rejects.toThrow("Resource not found.");
     });
   });
 });
