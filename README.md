@@ -23,9 +23,6 @@ A modern, responsive React + TypeScript application for exploring GitHub users a
 - [🧪 Testing](#-testing)
 - [🚀 Deployment](#-deployment)
 - [🐛 Troubleshooting](#-troubleshooting)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-- [🏛️ Architecture & Design Patterns](#-architecture--design-patterns)
 
 ## 🚀 Live Demo
 
@@ -382,14 +379,6 @@ npm cache clean --force
 | "User not found"      | Invalid username       | Check username spelling  |
 | "Network error"       | No internet connection | Check connection         |
 | "Build failed"        | TypeScript errors      | Fix type errors          |
-
-### Development Guidelines
-
-- Follow TypeScript best practices
-- Write tests for new features
-- Update documentation as needed
-- Use conventional commit messages
-- Ensure all tests pass before submitting
 
 **Made with ❤️ by [Andre Pangestu](https://github.com/andrepangestu)**
 
