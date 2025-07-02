@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
@@ -22,7 +23,7 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Add vi to global scope
+// Add vi to global scope for tests
 declare global {
   const vi: typeof import("vitest").vi;
 }

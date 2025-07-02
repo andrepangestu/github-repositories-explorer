@@ -130,6 +130,7 @@ function githubApiReducer(
 // Context
 // =============================================================================
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const GithubApiContext = createContext<GithubApiContextType | undefined>(
   undefined
 );

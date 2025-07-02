@@ -38,6 +38,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
+    "test:run": "vitest run",
+    "test:ci": "vitest run --reporter=verbose",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "predeploy": "npm run build",
