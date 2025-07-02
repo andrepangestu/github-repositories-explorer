@@ -32,7 +32,6 @@ export const SearchBar: React.FC = React.memo(() => {
     [handleSubmit]
   );
 
-  // Set initial value when searchQuery changes
   useEffect(() => {
     if (inputRef.current && state.searchQuery !== inputRef.current.value) {
       inputRef.current.value = state.searchQuery;

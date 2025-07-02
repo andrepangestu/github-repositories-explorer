@@ -14,7 +14,6 @@ export const UserList: React.FC = React.memo(() => {
   const { state, fetchRepos } = useGithubApi();
   const [usersWithRepos, setUsersWithRepos] = useState<UserWithRepos[]>([]);
 
-  // Initialize users when the users state changes
   useEffect(() => {
     setUsersWithRepos(
       state.users.map((user) => ({
@@ -27,7 +26,6 @@ export const UserList: React.FC = React.memo(() => {
     );
   }, [state.users]);
 
-  // Update repositories when cache changes
   useEffect(() => {
     setUsersWithRepos((prev) =>
       prev.map((user) => {
@@ -77,7 +75,6 @@ export const UserList: React.FC = React.memo(() => {
       const user = usersWithRepos.find((u) => u.id === userId);
       if (!user) return;
 
-      // First check if we already have cached repositories
       const cachedRepos = state.reposCache.get(user.login.toLowerCase());
       if (cachedRepos && cachedRepos.length > 0) {
         updateUserRepositories(userId, cachedRepos, false, null);
@@ -86,7 +83,6 @@ export const UserList: React.FC = React.memo(() => {
 
       try {
         await fetchRepos(user.login);
-        // The useEffect watching state.reposCache will update the UI
       } catch (error) {
         const errorMessage =
           error instanceof Error
@@ -105,16 +101,12 @@ export const UserList: React.FC = React.memo(() => {
 
       const newExpanded = !user.isExpanded;
 
-      // Update the user state
       setUsersWithRepos((prev) => {
         return prev.map((u) => {
           if (u.id === userId) {
-            // If expanding for the first time, we need to load repositories
             if (newExpanded && u.repositories.length === 0) {
-              // Check cache first
               const cachedRepos = state.reposCache.get(u.login.toLowerCase());
               if (cachedRepos && cachedRepos.length > 0) {
-                // Use cached repositories immediately
                 return {
                   ...u,
                   isExpanded: newExpanded,
@@ -123,7 +115,6 @@ export const UserList: React.FC = React.memo(() => {
                   reposError: null,
                 };
               } else {
-                // Set loading state
                 return {
                   ...u,
                   isExpanded: newExpanded,
@@ -139,7 +130,6 @@ export const UserList: React.FC = React.memo(() => {
         });
       });
 
-      // If we need to load repositories, do it after state update
       if (newExpanded && user.repositories.length === 0) {
         const cachedRepos = state.reposCache.get(user.login.toLowerCase());
         if (!cachedRepos || cachedRepos.length === 0) {

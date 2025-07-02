@@ -12,14 +12,12 @@ const AppContent: React.FC = () => {
       <div className="max-w-md mx-auto">
         <SearchBar />
 
-        {/* Error Message */}
         {state.error && (
           <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
             {state.error}
           </div>
         )}
 
-        {/* User List */}
         {state.users.length > 0 && !state.error && <UserList />}
       </div>
     </div>

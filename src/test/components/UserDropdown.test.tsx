@@ -4,6 +4,18 @@ import userEvent from "@testing-library/user-event";
 import { UserDropdown } from "../../components/UserDropdown";
 import type { GithubUser, GithubRepository } from "../../types/github";
 
+// Ensure clipboard is available before any userEvent setup
+if (!navigator.clipboard) {
+  Object.defineProperty(navigator, "clipboard", {
+    value: {
+      writeText: vi.fn().mockResolvedValue(undefined),
+      readText: vi.fn().mockResolvedValue(""),
+    },
+    writable: true,
+    configurable: true,
+  });
+}
+
 // Mock window.open for RepositoryList
 const mockWindowOpen = vi.fn();
 vi.stubGlobal("window", {
@@ -50,6 +62,7 @@ describe("UserDropdown Component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockWindowOpen.mockClear();
   });
 
   describe("Rendering - Collapsed State", () => {
@@ -65,10 +78,10 @@ describe("UserDropdown Component", () => {
         />
       );
 
-      expect(screen.getByText("testuser")).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { expanded: false })
-      ).toBeInTheDocument();
+      // Be more specific - look for the username in the button
+      const toggleButton = screen.getByRole("button", { expanded: false });
+      expect(toggleButton).toHaveTextContent("testuser");
+      expect(toggleButton).toBeInTheDocument();
     });
 
     it("shows chevron down icon when collapsed", () => {
@@ -116,10 +129,10 @@ describe("UserDropdown Component", () => {
         />
       );
 
-      expect(screen.getByText("testuser")).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { expanded: true })
-      ).toBeInTheDocument();
+      // Be more specific - look for the username in the button
+      const toggleButton = screen.getByRole("button", { expanded: true });
+      expect(toggleButton).toHaveTextContent("testuser");
+      expect(toggleButton).toBeInTheDocument();
     });
 
     it("shows chevron up icon when expanded", () => {

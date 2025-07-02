@@ -146,7 +146,6 @@ export async function getUserRepositories(
   return repositories;
 }
 
-// Legacy support - keep the class interface for backward compatibility
 export class GithubApiService {
   static async searchUsers(
     query: string,
