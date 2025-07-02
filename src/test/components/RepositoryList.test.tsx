@@ -105,7 +105,7 @@ describe("RepositoryList Component", () => {
       render(<RepositoryList repositories={mockRepositories} />);
 
       // Should have star icons - look for SVG elements with the star class
-      const starIcons = document.querySelectorAll('svg.lucide-star');
+      const starIcons = document.querySelectorAll("svg.lucide-star");
       expect(starIcons.length).toBeGreaterThan(0);
     });
   });

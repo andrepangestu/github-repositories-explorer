@@ -35,7 +35,7 @@ describe("App Component", () => {
       render(<App />);
 
       // Check for the main container
-      const container = document.querySelector('.min-h-screen');
+      const container = document.querySelector(".min-h-screen");
       expect(container).toBeInTheDocument();
     });
 
@@ -60,7 +60,10 @@ describe("App Component", () => {
       const searchInput = screen.getByRole("textbox");
       const searchButton = screen.getByRole("button", { name: /search/i });
 
-      expect(searchInput).toHaveAttribute("aria-label", "Enter Github username");
+      expect(searchInput).toHaveAttribute(
+        "aria-label",
+        "Enter Github username"
+      );
       expect(searchButton).toHaveAttribute("type", "submit");
     });
   });
@@ -69,18 +72,18 @@ describe("App Component", () => {
     it("has proper CSS classes for responsive layout", () => {
       render(<App />);
 
-      const container = document.querySelector('.min-h-screen');
-      expect(container).toHaveClass('bg-gray-50', 'py-8', 'px-4');
+      const container = document.querySelector(".min-h-screen");
+      expect(container).toHaveClass("bg-gray-50", "py-8", "px-4");
 
-      const innerContainer = document.querySelector('.max-w-md');
-      expect(innerContainer).toHaveClass('mx-auto');
+      const innerContainer = document.querySelector(".max-w-md");
+      expect(innerContainer).toHaveClass("mx-auto");
     });
 
     it("applies proper spacing and styling", () => {
       render(<App />);
 
       // Check if the layout classes are applied correctly
-      const mainDiv = document.querySelector('.min-h-screen');
+      const mainDiv = document.querySelector(".min-h-screen");
       expect(mainDiv).toBeInTheDocument();
     });
   });
@@ -98,7 +101,7 @@ describe("App Component", () => {
 
       // Should not show any error messages initially
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
-      
+
       // Should not show user list initially
       expect(screen.queryByText(/showing users for/i)).not.toBeInTheDocument();
     });
@@ -110,7 +113,9 @@ describe("App Component", () => {
 
       // SearchBar should be present
       expect(screen.getByRole("textbox")).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /search/i })
+      ).toBeInTheDocument();
     });
 
     it("conditionally renders UserList component", () => {
@@ -133,9 +138,9 @@ describe("App Component", () => {
       render(<App />);
 
       const searchInput = screen.getByRole("textbox");
-      
+
       fireEvent.change(searchInput, { target: { value: "testuser" } });
-      
+
       expect(searchInput).toHaveValue("testuser");
     });
 
@@ -180,14 +185,16 @@ describe("App Component", () => {
       render(<App />);
 
       const searchInput = screen.getByRole("textbox");
-      
+
       // Multiple interactions should not break the UI
       fireEvent.change(searchInput, { target: { value: "test" } });
       fireEvent.change(searchInput, { target: { value: "" } });
       fireEvent.change(searchInput, { target: { value: "newtest" } });
 
       expect(searchInput).toHaveValue("newtest");
-      expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /search/i })
+      ).toBeInTheDocument();
     });
   });
 
@@ -196,7 +203,10 @@ describe("App Component", () => {
       render(<App />);
 
       const searchInput = screen.getByRole("textbox");
-      expect(searchInput).toHaveAttribute("aria-label", "Enter Github username");
+      expect(searchInput).toHaveAttribute(
+        "aria-label",
+        "Enter Github username"
+      );
     });
 
     it("supports keyboard navigation", () => {
@@ -225,16 +235,16 @@ describe("App Component", () => {
     it("has responsive container classes", () => {
       render(<App />);
 
-      const container = document.querySelector('.max-w-md');
-      expect(container).toHaveClass('mx-auto');
+      const container = document.querySelector(".max-w-md");
+      expect(container).toHaveClass("mx-auto");
     });
 
     it("handles different screen sizes", () => {
       render(<App />);
 
       // Should have responsive padding and margins
-      const mainContainer = document.querySelector('.min-h-screen');
-      expect(mainContainer).toHaveClass('py-8', 'px-4');
+      const mainContainer = document.querySelector(".min-h-screen");
+      expect(mainContainer).toHaveClass("py-8", "px-4");
     });
   });
 
@@ -244,9 +254,11 @@ describe("App Component", () => {
 
       // Re-rendering should not cause issues
       rerender(<App />);
-      
+
       expect(screen.getByRole("textbox")).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /search/i })
+      ).toBeInTheDocument();
     });
 
     it("maintains component stability", () => {

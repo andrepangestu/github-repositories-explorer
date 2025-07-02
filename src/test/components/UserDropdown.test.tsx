@@ -171,7 +171,7 @@ describe("UserDropdown Component", () => {
 
       expect(screen.getByText("Loading repositories...")).toBeInTheDocument();
       // Look for the loading spinner by its CSS class instead of role
-      const spinner = document.querySelector('.animate-spin');
+      const spinner = document.querySelector(".animate-spin");
       expect(spinner).toBeInTheDocument();
     });
 

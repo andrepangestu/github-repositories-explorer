@@ -49,10 +49,10 @@ describe("SearchBar Component", () => {
 
       const form = document.querySelector("form");
       expect(form).toBeInTheDocument();
-      
+
       const searchInput = screen.getByRole("textbox");
       const searchButton = screen.getByRole("button", { name: /search/i });
-      
+
       expect(form).toContainElement(searchInput);
       expect(form).toContainElement(searchButton);
     });
