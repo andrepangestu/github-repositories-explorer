@@ -18,15 +18,24 @@ const formatNumber = (num: number): string => {
 
 export const RepositoryList: React.FC<RepositoryListProps> = React.memo(
   ({ repositories }) => {
+    const handleRepositoryClick = (url: string) => {
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
+
     return (
       <div className="space-y-3">
         {repositories.map((repo) => (
           <div key={repo.id} className="bg-gray-50 p-3 rounded-md">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0 pr-4">
-                <h3 className="font-bold text-gray-900 text-sm mb-1">
+                <button
+                  className="font-bold text-gray-600 hover:text-gray-800 text-sm mb-1 cursor-pointer transition-colors text-left p-0 border-none bg-transparent focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 rounded"
+                  onClick={() => handleRepositoryClick(repo.html_url)}
+                  title={`Open ${repo.name} on GitHub`}
+                  type="button"
+                >
                   {repo.name}
-                </h3>
+                </button>
                 {repo.description && (
                   <p className="text-gray-600 text-sm leading-relaxed">
                     {repo.description}

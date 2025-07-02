@@ -1,6 +1,6 @@
 # GitHub Repositories Explorer
 
-A [![Built with React](https://img.shields.io/badge/React-19.1.0-blue.svg)](https://reactjs.org/)
+[![Built with React](https://img.shields.io/badge/React-19.1.0-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.0.0-yellow.svg)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4.17-blue.svg)](https://tailwindcss.com/)
@@ -8,11 +8,12 @@ A [![Built with React](https://img.shields.io/badge/React-19.1.0-blue.svg)](http
 
 A modern, responsive React + TypeScript application for exploring GitHub users and their repositories. This application integrates with the GitHub REST API v3 to provide an intuitive interface for searching users and viewing their public repositories with detailed information.
 
-#� Table of Contents
+## 📋 Table of Contents
 
-- [📸 Screenshots](#-screenshots)
+- [🚀 Live Demo](#-live-demo)
 - [🌟 Features](#-features)
 - [🛠️ Technology Stack](#️-technology-stack)
+- [🏛️ Architecture & Design Patterns](#️-architecture--design-patterns)
 - [📋 Prerequisites](#-prerequisites)
 - [🚀 Quick Start](#-quick-start)
 - [📝 Available Scripts](#-available-scripts)
@@ -22,20 +23,15 @@ A modern, responsive React + TypeScript application for exploring GitHub users a
 - [🧪 Testing](#-testing)
 - [🚀 Deployment](#-deployment)
 - [🐛 Troubleshooting](#-troubleshooting)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🏛️ Architecture & Design Patterns](#-architecture--design-patterns)
 
-## �# 📸 Screenshots
+## 🚀 Live Demo
 
-### Search Interface
+**[Try the live application here!](https://andrepangestu.github.io/github-repositories-explorer)**
 
-![Search Interface](docs/images/search-interface.png)
-
-### User Results
-
-![User Results](docs/images/user-results.png)
-
-### Repository View
-
-![Repository View](docs/images/repository-view.png)
+The demo is automatically deployed from the main branch and showcases all the features described in this README.
 
 ## 🌟 Features
 
@@ -70,38 +66,65 @@ A modern, responsive React + TypeScript application for exploring GitHub users a
 ### **Frontend**
 
 - **React 19.1.0** - Latest React with concurrent features
-- **TypeScript 5.8.3** - Type-safe JavaScript
+- **TypeScript 5.8.3** - Type-safe JavaScript with latest features
 - **Tailwind CSS 3.4.17** - Utility-first CSS framework
-- **Lucide React 0.525.0** - Beautiful SVG icons
+- **Lucide React 0.525.0** - Beautiful, customizable SVG icons
 
-### **Build Tools**
+### **Build Tools & Development**
 
-- **Vite 7.0.0** - Fast build tool and dev server
-- **PostCSS 8.5.6** - CSS processing
-- **Autoprefixer 10.4.21** - CSS vendor prefixes
+- **Vite 7.0.0** - Next-generation frontend build tool with fast HMR
+- **PostCSS 8.5.6** - CSS post-processing with plugins
+- **Autoprefixer 10.4.21** - Automatic CSS vendor prefixes
+- **ESLint 9.29.0** - JavaScript/TypeScript linting with latest rules
+- **TypeScript ESLint 8.34.1** - TypeScript-specific linting rules
 
 ### **HTTP Client**
 
-- **Axios 1.10.0** - Promise-based HTTP client
+- **Axios 1.10.0** - Promise-based HTTP client for API requests
 
-### **Testing**
+### **State Management**
 
-- **Vitest 3.2.4** - Unit test framework
-- **Testing Library** - React component testing
-- **jsdom 26.1.0** - DOM implementation for testing
+- **React Context API** - Built-in React state management solution
+- **useReducer Hook** - Complex state logic management with predictable updates
+- **Custom Hooks** - Abstracted state logic for clean component separation
+- **In-Memory Caching** - Map-based caching for users and repositories data
+- **Request Debouncing** - Performance optimization for search queries
+- **Abort Controllers** - Request cancellation for better UX
 
-### **Code Quality**
+### **Testing Framework**
 
-- **ESLint 9.29.0** - JavaScript/TypeScript linting
-- **TypeScript ESLint 8.34.1** - TypeScript-specific linting rules
+- **Vitest 3.2.4** - Fast unit test framework powered by Vite
+- **Testing Library (React) 16.3.0** - Simple and complete testing utilities
+- **Testing Library (User Event) 14.6.1** - User interaction simulation
+- **Testing Library (Jest DOM) 6.6.3** - Custom Jest matchers for DOM
+- **jsdom 26.1.0** - Pure JavaScript DOM implementation for testing
+
+### **Development Tools**
+
+- **@types/node 24.0.7** - Node.js type definitions
+- **@types/react 19.1.8** - React type definitions
+- **@types/react-dom 19.1.6** - React DOM type definitions
+- **gh-pages 6.3.0** - Deployment to GitHub Pages
+- **@tailwindcss/forms 0.5.10** - Enhanced form styling with Tailwind CSS
+- **globals 16.2.0** - Global type definitions for ESLint configuration
+
+### **Configuration & Tooling**
+
+- **TypeScript Configuration** - Strict mode with separate configs for app and Node.js
+- **Vite Configuration** - Custom setup with React plugin and testing environment
+- **Tailwind Configuration** - Extended theme with custom GitHub color palette
+- **ESLint Configuration** - Modern flat config with React and TypeScript rules
+- **PostCSS Configuration** - Tailwind CSS and Autoprefixer integration
+- **Test Configuration** - Vitest with jsdom environment and custom setup
+- **GitHub Actions** - Automated deployment workflow with proper permissions
 
 ## 📋 Prerequisites
 
 Before running this project, ensure you have:
 
-- **Node.js** (version 18.0.0 or higher)
+- **Node.js** (version 18.0.0 or higher) - [Download](https://nodejs.org/)
 - **npm** (version 8.0.0 or higher) or **yarn** (version 1.22.0 or higher)
-- **Git** for version control
+- **Git** for version control - [Download](https://git-scm.com/)
 - A modern web browser (Chrome, Firefox, Safari, Edge)
 
 ## 🚀 Quick Start
@@ -127,7 +150,9 @@ npm run dev
 
 ### 4. Open in Browser
 
-Navigate to `http://localhost:3000` in browser.
+Navigate to `http://localhost:3000` in your browser.
+
+> **Note**: This project is configured to use port 3000
 
 ## 📝 Available Scripts
 
@@ -195,34 +220,45 @@ GET https://api.github.com/users/{username}/repos?sort=updated&direction=desc
 
 ```
 github-repositories-explorer/
-├── public/                 # Static assets
-│   └── vite.svg           # Vite logo
-├── src/                   # Source code
-│   ├── components/        # React components
-│   │   └── UserSearch.tsx # Main search and display component
-│   ├── services/         # API services
-│   │   └── githubApi.ts  # GitHub API integration
-│   ├── types/            # TypeScript definitions
-│   │   └── github.ts     # GitHub API types
-│   ├── utils/            # Utility functions
-│   │   └── helpers.ts    # Helper functions
-│   ├── test/             # Test configuration
-│   │   ├── setup.ts      # Test setup
-│   │   ├── App.test.tsx  # App component tests
-│   │   └── helpers.test.ts # Utility tests
-│   ├── App.tsx           # Main application component
-│   ├── main.tsx          # Application entry point
-│   ├── index.css         # Global styles
-│   └── vite-env.d.ts     # Vite type definitions
-├── docs/                 # Documentation
-├── dist/                 # Production build (generated)
-├── node_modules/         # Dependencies (generated)
-├── .eslintrc.js         # ESLint configuration
-├── tailwind.config.js   # Tailwind CSS configuration
-├── tsconfig.json        # TypeScript configuration
-├── vite.config.ts       # Vite configuration
-├── package.json         # Project metadata and dependencies
-└── README.md           # This file
+├── public/                     # Static assets
+│   └── vite.svg               # Vite logo
+├── src/                       # Source code
+│   ├── components/            # React components
+│   │   ├── RepositoryList.tsx # Repository display component
+│   │   ├── SearchBar.tsx      # Search input component
+│   │   ├── UserDropdown.tsx   # User dropdown component
+│   │   └── UserList.tsx       # User list component
+│   ├── contexts/             # React contexts
+│   │   └── GithubApiContext.tsx # GitHub API context
+│   ├── hooks/                # Custom React hooks
+│   │   └── useGithubApi.ts   # GitHub API custom hook
+│   ├── services/             # API services
+│   │   └── githubApi.ts      # GitHub API integration
+│   ├── types/                # TypeScript definitions
+│   │   └── github.ts         # GitHub API types
+│   ├── test/                 # Test files
+│   │   ├── setup.ts          # Test setup configuration
+│   │   └── App.test.tsx      # App component tests
+│   ├── application/          # Application layer (Domain-driven design)
+│   ├── domain/               # Domain layer (Business logic)
+│   ├── utils/                # Utility functions
+│   ├── App.tsx               # Main application component
+│   ├── main.tsx              # Application entry point
+│   ├── index.css             # Global styles with Tailwind
+│   └── vite-env.d.ts         # Vite type definitions
+├── docs/                     # Documentation and images
+│   └── images/               # Documentation images
+├── dist/                     # Production build (generated)
+├── node_modules/             # Dependencies (generated)
+├── eslint.config.js          # ESLint configuration
+├── tailwind.config.js        # Tailwind CSS configuration
+├── postcss.config.js         # PostCSS configuration
+├── tsconfig.json             # TypeScript configuration
+├── tsconfig.app.json         # TypeScript app configuration
+├── tsconfig.node.json        # TypeScript Node configuration
+├── vite.config.ts            # Vite configuration
+├── package.json              # Project metadata and dependencies
+└── README.md                 # This documentation
 ```
 
 ## 🧪 Testing
@@ -247,6 +283,9 @@ npm run test:ui
 
 # Generate coverage report
 npm run test:coverage
+
+# Run tests in watch mode
+npm run test:watch
 ```
 
 ### Test Examples
@@ -288,22 +327,15 @@ This creates an optimized build in the `dist/` directory.
 
 ### Deployment Options
 
-#### GitHub Pages (Recommended)
+#### GitHub Pages (Current Setup)
 
-This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+This project is configured for deployment to GitHub Pages:
 
 **Automatic Deployment:**
 
 1. Push code to the `main` branch
-2. GitHub Actions will automatically build and deploy to site
-3. The site will be available at: `https://andrepangestu.github.io/github-repositories-explorer`
-
-**Manual Deployment:**
-
-```bash
-# Deploy to GitHub Pages manually
-npm run deploy
-```
+2. Run `npm run deploy` to build and deploy to GitHub Pages
+3. The site will be available at: [https://andrepangestu.github.io/github-repositories-explorer](https://andrepangestu.github.io/github-repositories-explorer)
 
 ## 🐛 Troubleshooting
 
@@ -312,11 +344,11 @@ npm run deploy
 #### Port Already in Use
 
 ```bash
-# Kill process on port 5173
-npx kill-port 5173
+# Kill process on port 3000
+npx kill-port 3000
 
 # Or use different port
-npm run dev -- --port 3000
+npm run dev -- --port 5173
 ```
 
 #### Dependencies Issues
@@ -325,6 +357,21 @@ npm run dev -- --port 3000
 # Clear node_modules and reinstall
 rm -rf node_modules package-lock.json
 npm install
+
+# Or if using Windows
+rmdir /s node_modules
+del package-lock.json
+npm install
+```
+
+#### Build Issues
+
+```bash
+# Clear Vite cache
+npx vite --force
+
+# Clear npm cache
+npm cache clean --force
 ```
 
 ### Error Messages
@@ -334,3 +381,16 @@ npm install
 | "Rate limit exceeded" | Too many API requests  | Wait or add GitHub token |
 | "User not found"      | Invalid username       | Check username spelling  |
 | "Network error"       | No internet connection | Check connection         |
+| "Build failed"        | TypeScript errors      | Fix type errors          |
+
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Write tests for new features
+- Update documentation as needed
+- Use conventional commit messages
+- Ensure all tests pass before submitting
+
+**Made with ❤️ by [Andre Pangestu](https://github.com/andrepangestu)**
+
+**⭐ Star this repository if you find it helpful!**

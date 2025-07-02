@@ -30,7 +30,7 @@ export const UserDropdown: React.FC<UserDropdownProps> = React.memo(
           aria-controls={`repos-${user.id}`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-gray-900">{user.login}</span>
+            <span className="text-gray-900 font-semibold">{user.login}</span>
             {isExpanded ? (
               <ChevronUp className="h-4 w-4 text-gray-500" />
             ) : (
