@@ -7,7 +7,6 @@ import {
   act,
   waitFor,
 } from "@testing-library/react";
-import { GithubApiProvider } from "../../contexts/GithubApiContext";
 import { useGithubApi } from "../../hooks/useGithubApi";
 import { mockUser, mockRepository } from "../test-utils";
 
@@ -21,6 +20,7 @@ vi.mock("../../services/githubApi", () => ({
 
 // Import the mocked service explicitly
 import { GithubApiService } from "../../services/githubApi";
+import { GithubApiProvider } from "../../contexts/GithubApiContext";
 
 // Create a wrapper for tests
 const wrapper = ({ children }: { children: React.ReactNode }) => (

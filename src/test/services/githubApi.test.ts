@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Mock } from "vitest";
 import axios from "axios";
 import { GithubApiService } from "../../services/githubApi";
 import {
@@ -110,7 +111,7 @@ describe("GithubApiService", () => {
       };
 
       mockAxiosInstance.get.mockRejectedValue(error);
-      (mockAxios.isAxiosError as Mock).mockReturnValue(true);
+      mockIsAxiosError.mockReturnValue(true);
 
       await expect(GithubApiService.searchUsers("testuser")).rejects.toThrow(
         "Github API rate limit exceeded. Please try again later."
@@ -121,7 +122,7 @@ describe("GithubApiService", () => {
       const error = new Error("Network Error");
 
       mockAxiosInstance.get.mockRejectedValue(error);
-      (mockAxios.isAxiosError as Mock).mockReturnValue(false);
+      mockIsAxiosError.mockReturnValue(false);
 
       await expect(GithubApiService.searchUsers("testuser")).rejects.toThrow(
         "Network error. Please check your internet connection."
@@ -194,7 +195,7 @@ describe("GithubApiService", () => {
       };
 
       mockAxiosInstance.get.mockRejectedValue(error);
-      (mockAxios.isAxiosError as Mock).mockReturnValue(true);
+      mockIsAxiosError.mockReturnValue(true);
 
       await expect(
         GithubApiService.getUserRepositories("nonexistent")
