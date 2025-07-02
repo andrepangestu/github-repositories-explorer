@@ -24,7 +24,7 @@ describe("App Component", () => {
     const searchInput = screen.getByRole("textbox");
     const searchButton = screen.getByRole("button", { name: /search/i });
 
-    expect(searchInput).toHaveAttribute("aria-label", "Enter GitHub username");
+    expect(searchInput).toHaveAttribute("aria-label", "Enter Github username");
     expect(searchButton).toHaveAttribute("type", "submit");
   });
 });

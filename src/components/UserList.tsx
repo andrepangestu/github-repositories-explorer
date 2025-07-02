@@ -1,17 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { UserDropdown } from "./UserDropdown";
-import { useGitHubApi } from "../hooks/useGitHubApi";
-import type { GitHubUser, GitHubRepository } from "../types/github";
+import { useGithubApi } from "../hooks/useGithubApi";
+import type { GithubUser, GithubRepository } from "../types/github";
 
-interface UserWithRepos extends GitHubUser {
-  repositories: GitHubRepository[];
+interface UserWithRepos extends GithubUser {
+  repositories: GithubRepository[];
   isExpanded: boolean;
   isLoadingRepos: boolean;
   reposError: string | null;
 }
 
 export const UserList: React.FC = React.memo(() => {
-  const { state, fetchRepos } = useGitHubApi();
+  const { state, fetchRepos } = useGithubApi();
   const [usersWithRepos, setUsersWithRepos] = useState<UserWithRepos[]>([]);
 
   // Initialize users when the users state changes
@@ -32,7 +32,11 @@ export const UserList: React.FC = React.memo(() => {
     setUsersWithRepos((prev) =>
       prev.map((user) => {
         const cachedRepos = state.reposCache.get(user.login.toLowerCase());
-        if (cachedRepos && user.isExpanded && user.repositories.length !== cachedRepos.length) {
+        if (
+          cachedRepos &&
+          user.isExpanded &&
+          user.repositories.length !== cachedRepos.length
+        ) {
           return {
             ...user,
             repositories: cachedRepos,
@@ -46,7 +50,12 @@ export const UserList: React.FC = React.memo(() => {
   }, [state.reposCache]);
 
   const updateUserRepositories = useCallback(
-    (userId: number, repositories: GitHubRepository[], isLoading: boolean, error: string | null) => {
+    (
+      userId: number,
+      repositories: GithubRepository[],
+      isLoading: boolean,
+      error: string | null
+    ) => {
       setUsersWithRepos((prev) =>
         prev.map((u) =>
           u.id === userId
@@ -149,7 +158,8 @@ export const UserList: React.FC = React.memo(() => {
     <div className="w-full mt-6">
       <div className="mb-4">
         <h2 className="text-sm text-gray-700">
-          Showing users for "<span className="font-medium">{state.searchQuery}</span>"
+          Showing users for "
+          <span className="font-medium">{state.searchQuery}</span>"
         </h2>
       </div>
 

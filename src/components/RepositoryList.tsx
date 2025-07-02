@@ -1,9 +1,9 @@
 import React from "react";
 import { Star } from "lucide-react";
-import type { GitHubRepository } from "../types/github";
+import type { GithubRepository } from "../types/github";
 
 interface RepositoryListProps {
-  repositories: GitHubRepository[];
+  repositories: GithubRepository[];
 }
 
 const formatNumber = (num: number): string => {

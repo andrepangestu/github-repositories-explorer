@@ -5,47 +5,47 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { GitHubApiService } from "../services/githubApi";
-import type { GitHubUser, GitHubRepository } from "../types/github";
+import { GithubApiService } from "../services/githubApi";
+import type { GithubUser, GithubRepository } from "../types/github";
 
 // =============================================================================
 // Types
 // =============================================================================
 
-export interface GitHubApiState {
+export interface GithubApiState {
   searchQuery: string;
-  users: GitHubUser[];
-  selectedUser: GitHubUser | null;
-  repos: GitHubRepository[];
+  users: GithubUser[];
+  selectedUser: GithubUser | null;
+  repos: GithubRepository[];
   loadingUsers: boolean;
   loadingRepos: boolean;
   error: string | null;
-  usersCache: Map<string, GitHubUser[]>;
-  reposCache: Map<string, GitHubRepository[]>;
+  usersCache: Map<string, GithubUser[]>;
+  reposCache: Map<string, GithubRepository[]>;
 }
 
-export type GitHubApiAction =
+export type GithubApiAction =
   | { type: "SET_SEARCH_QUERY"; payload: string }
-  | { type: "SET_USERS"; payload: GitHubUser[] }
-  | { type: "SET_SELECTED_USER"; payload: GitHubUser | null }
-  | { type: "SET_REPOS"; payload: GitHubRepository[] }
+  | { type: "SET_USERS"; payload: GithubUser[] }
+  | { type: "SET_SELECTED_USER"; payload: GithubUser | null }
+  | { type: "SET_REPOS"; payload: GithubRepository[] }
   | { type: "SET_LOADING_USERS"; payload: boolean }
   | { type: "SET_LOADING_REPOS"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
-  | { type: "CACHE_USERS"; payload: { query: string; users: GitHubUser[] } }
+  | { type: "CACHE_USERS"; payload: { query: string; users: GithubUser[] } }
   | {
       type: "CACHE_REPOS";
-      payload: { username: string; repos: GitHubRepository[] };
+      payload: { username: string; repos: GithubRepository[] };
     }
   | { type: "CLEAR_SEARCH" };
 
-export interface GitHubApiContextType {
+export interface GithubApiContextType {
   // State
-  state: GitHubApiState;
+  state: GithubApiState;
   // Actions
   fetchUsers: (query: string) => void;
   fetchRepos: (username: string) => Promise<void>;
-  selectUser: (user: GitHubUser) => void;
+  selectUser: (user: GithubUser) => void;
   setSearchQuery: (query: string) => void;
   triggerSearch: () => void;
   clearSearch: () => void;
@@ -55,7 +55,7 @@ export interface GitHubApiContextType {
 // Initial State
 // =============================================================================
 
-const initialState: GitHubApiState = {
+const initialState: GithubApiState = {
   searchQuery: "",
   users: [],
   selectedUser: null,
@@ -72,9 +72,9 @@ const initialState: GitHubApiState = {
 // =============================================================================
 
 function githubApiReducer(
-  state: GitHubApiState,
-  action: GitHubApiAction
-): GitHubApiState {
+  state: GithubApiState,
+  action: GithubApiAction
+): GithubApiState {
   switch (action.type) {
     case "SET_SEARCH_QUERY":
       return { ...state, searchQuery: action.payload };
@@ -130,7 +130,7 @@ function githubApiReducer(
 // Context
 // =============================================================================
 
-export const GitHubApiContext = createContext<GitHubApiContextType | undefined>(
+export const GithubApiContext = createContext<GithubApiContextType | undefined>(
   undefined
 );
 
@@ -138,11 +138,11 @@ export const GitHubApiContext = createContext<GitHubApiContextType | undefined>(
 // Provider Component
 // =============================================================================
 
-interface GitHubApiProviderProps {
+interface GithubApiProviderProps {
   children: React.ReactNode;
 }
 
-export const GitHubApiProvider: React.FC<GitHubApiProviderProps> = ({
+export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(githubApiReducer, initialState);
@@ -191,7 +191,7 @@ export const GitHubApiProvider: React.FC<GitHubApiProviderProps> = ({
       dispatch({ type: "SET_USERS", payload: [] });
 
       try {
-        const searchResults = await GitHubApiService.searchUsers(query, 5);
+        const searchResults = await GithubApiService.searchUsers(query, 5);
 
         // Check if request was aborted
         if (abortControllerRef.current?.signal.aborted) {
@@ -261,7 +261,7 @@ export const GitHubApiProvider: React.FC<GitHubApiProviderProps> = ({
       dispatch({ type: "SET_ERROR", payload: null });
 
       try {
-        const repositories = await GitHubApiService.getUserRepositories(
+        const repositories = await GithubApiService.getUserRepositories(
           username
         );
         dispatch({ type: "SET_REPOS", payload: repositories });
@@ -283,7 +283,7 @@ export const GitHubApiProvider: React.FC<GitHubApiProviderProps> = ({
   );
 
   // Select user
-  const selectUser = useCallback((user: GitHubUser) => {
+  const selectUser = useCallback((user: GithubUser) => {
     dispatch({ type: "SET_SELECTED_USER", payload: user });
   }, []);
 
@@ -310,7 +310,7 @@ export const GitHubApiProvider: React.FC<GitHubApiProviderProps> = ({
   }, [cleanup]);
 
   // Context value with useMemo for performance
-  const contextValue = useMemo<GitHubApiContextType>(
+  const contextValue = useMemo<GithubApiContextType>(
     () => ({
       state,
       fetchUsers: debouncedFetchUsers,
@@ -332,8 +332,8 @@ export const GitHubApiProvider: React.FC<GitHubApiProviderProps> = ({
   );
 
   return (
-    <GitHubApiContext.Provider value={contextValue}>
+    <GithubApiContext.Provider value={contextValue}>
       {children}
-    </GitHubApiContext.Provider>
+    </GithubApiContext.Provider>
   );
 };

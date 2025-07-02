@@ -1,11 +1,11 @@
 import React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import type { GitHubUser, GitHubRepository } from "../types/github";
+import type { GithubUser, GithubRepository } from "../types/github";
 import { RepositoryList } from "./RepositoryList";
 
 interface UserDropdownProps {
-  user: GitHubUser;
-  repositories: GitHubRepository[];
+  user: GithubUser;
+  repositories: GithubRepository[];
   isExpanded: boolean;
   isLoadingRepos: boolean;
   reposError: string | null;

@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { GitHubApiContext } from "../contexts/GitHubApiContext";
-import type { GitHubApiContextType } from "../contexts/GitHubApiContext";
+import { GithubApiContext } from "../contexts/GithubApiContext";
+import type { GithubApiContextType } from "../contexts/GithubApiContext";
 
-export const useGitHubApi = (): GitHubApiContextType => {
-  const context = useContext(GitHubApiContext);
+export const useGithubApi = (): GithubApiContextType => {
+  const context = useContext(GithubApiContext);
   if (context === undefined) {
-    throw new Error("useGitHubApi must be used within a GitHubApiProvider");
+    throw new Error("useGithubApi must be used within a GithubApiProvider");
   }
   return context;
 };

@@ -1,11 +1,11 @@
 // =============================================================================
-// GitHub API Types
+// Github API Types
 // =============================================================================
 
 /**
- * Represents a GitHub user from the API
+ * Represents a Github user from the API
  */
-export interface GitHubUser {
+export interface GithubUser {
   id: number;
   login: string;
   avatar_url: string;
@@ -21,9 +21,9 @@ export interface GitHubUser {
 }
 
 /**
- * Represents a GitHub repository from the API
+ * Represents a Github repository from the API
  */
-export interface GitHubRepository {
+export interface GithubRepository {
   id: number;
   name: string;
   full_name: string;
@@ -41,12 +41,12 @@ export interface GitHubRepository {
 }
 
 /**
- * GitHub search users API response structure
+ * Github search users API response structure
  */
 export interface SearchUsersResponse {
   total_count: number;
   incomplete_results: boolean;
-  items: GitHubUser[];
+  items: GithubUser[];
 }
 
 // =============================================================================

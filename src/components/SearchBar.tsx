@@ -1,8 +1,8 @@
 import React, { useRef, useCallback, useEffect } from "react";
-import { useGitHubApi } from "../hooks/useGitHubApi";
+import { useGithubApi } from "../hooks/useGithubApi";
 
 export const SearchBar: React.FC = React.memo(() => {
-  const { state, setSearchQuery, triggerSearch } = useGitHubApi();
+  const { state, setSearchQuery, triggerSearch } = useGithubApi();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = useCallback(() => {
@@ -50,7 +50,7 @@ export const SearchBar: React.FC = React.memo(() => {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
-          aria-label="Enter GitHub username"
+          aria-label="Enter Github username"
         />
 
         <button

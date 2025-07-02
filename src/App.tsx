@@ -1,11 +1,11 @@
 import React from "react";
-import { GitHubApiProvider } from "./contexts/GitHubApiContext";
+import { GithubApiProvider } from "./contexts/GithubApiContext";
 import { SearchBar } from "./components/SearchBar";
 import { UserList } from "./components/UserList";
-import { useGitHubApi } from "./hooks/useGitHubApi";
+import { useGithubApi } from "./hooks/useGithubApi";
 
 const AppContent: React.FC = () => {
-  const { state } = useGitHubApi();
+  const { state } = useGithubApi();
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -28,9 +28,9 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <GitHubApiProvider>
+    <GithubApiProvider>
       <AppContent />
-    </GitHubApiProvider>
+    </GithubApiProvider>
   );
 }
 

@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance } from "axios";
 import type {
-  GitHubUser,
-  GitHubRepository,
+  GithubUser,
+  GithubRepository,
   SearchUsersResponse,
   AppError,
 } from "../types/github";
@@ -11,7 +11,7 @@ const API_CONFIG = {
   timeout: 10000,
   headers: {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "GitHub-Repositories-Explorer",
+    "User-Agent": "Github-Repositories-Explorer",
   },
 } as const;
 
@@ -20,7 +20,7 @@ const SEARCH_CONFIG = {
   maxReposPerPage: 100,
 } as const;
 
-class GitHubApiClient {
+class GithubApiClient {
   private readonly client: AxiosInstance;
 
   constructor() {
@@ -44,7 +44,7 @@ class GitHubApiClient {
       switch (status) {
         case 403:
           return {
-            message: "GitHub API rate limit exceeded. Please try again later.",
+            message: "Github API rate limit exceeded. Please try again later.",
             status,
             type: "API_ERROR",
           };
@@ -62,7 +62,7 @@ class GitHubApiClient {
           };
         default:
           return {
-            message: `GitHub API error: ${message}`,
+            message: `Github API error: ${message}`,
             status,
             type: "API_ERROR",
           };
@@ -76,7 +76,7 @@ class GitHubApiClient {
   }
 }
 
-const apiClient = new GitHubApiClient();
+const apiClient = new GithubApiClient();
 
 function validateSearchQuery(query: string): string {
   const trimmed = query.trim();
@@ -99,7 +99,7 @@ function validateSearchLimit(limit: number): number {
 export async function searchUsers(
   query: string,
   limit: number = SEARCH_CONFIG.maxResults
-): Promise<GitHubUser[]> {
+): Promise<GithubUser[]> {
   const validQuery = validateSearchQuery(query);
   const validLimit = validateSearchLimit(limit);
 
@@ -115,18 +115,18 @@ export async function searchUsers(
 
 export async function getUserRepositories(
   username: string
-): Promise<GitHubRepository[]> {
+): Promise<GithubRepository[]> {
   const trimmedUsername = username.trim();
   if (!trimmedUsername) {
     throw new Error("Username cannot be empty");
   }
 
-  const repositories: GitHubRepository[] = [];
+  const repositories: GithubRepository[] = [];
   let page = 1;
   let hasMorePages = true;
 
   while (hasMorePages) {
-    const pageRepos = await apiClient.get<GitHubRepository[]>(
+    const pageRepos = await apiClient.get<GithubRepository[]>(
       `/users/${trimmedUsername}/repos`,
       {
         sort: "updated",
@@ -147,17 +147,17 @@ export async function getUserRepositories(
 }
 
 // Legacy support - keep the class interface for backward compatibility
-export class GitHubApiService {
+export class GithubApiService {
   static async searchUsers(
     query: string,
     limit?: number
-  ): Promise<GitHubUser[]> {
+  ): Promise<GithubUser[]> {
     return searchUsers(query, limit);
   }
 
   static async getUserRepositories(
     username: string
-  ): Promise<GitHubRepository[]> {
+  ): Promise<GithubRepository[]> {
     return getUserRepositories(username);
   }
 }
