@@ -1,38 +1,27 @@
-import React, { type ReactElement } from "react";
 import {
-  render,
-  type RenderOptions,
   screen,
   waitFor,
+  fireEvent,
+  act,
+  within,
+  prettyDOM,
+  queries,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi, expect } from "vitest";
-import { GithubApiProvider } from "../contexts/GithubApiContext";
 import type {
   GithubUser,
   GithubRepository,
   SearchUsersResponse,
 } from "../types/github";
+import { render } from "./custom-render";
 
 // =============================================================================
 // Test Utilities and Setup
 // =============================================================================
 
-interface AllTheProvidersProps {
-  children: React.ReactNode;
-}
-
-const AllTheProviders: React.FC<AllTheProvidersProps> = ({ children }) => {
-  return <GithubApiProvider>{children}</GithubApiProvider>;
-};
-
-const customRender = (
-  ui: ReactElement,
-  options?: Omit<RenderOptions, "wrapper">
-) => render(ui, { wrapper: AllTheProviders, ...options });
-
-export * from "@testing-library/react";
-export { customRender as render };
+// Export specific items instead of using export * to avoid Fast Refresh errors
+export { render, screen, waitFor, fireEvent, act, within, prettyDOM, queries };
 export { mockAxiosInstance } from "./setup";
 
 // =============================================================================
