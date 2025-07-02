@@ -58,6 +58,10 @@ describe("SearchBar Component", () => {
       },
       setSearchQuery: mockSetSearchQuery,
       triggerSearch: mockTriggerSearch,
+      fetchUsers: mockFetchUsers,
+      fetchRepos: mockFetchRepos,
+      selectUser: mockSelectUser,
+      clearSearch: mockClearSearch,
     });
   });
 
@@ -141,10 +145,19 @@ describe("SearchBar Component", () => {
         searchQuery: "testuser",
         loadingUsers: true,
         users: [],
+        selectedUser: null,
+        repos: [],
+        loadingRepos: false,
         error: null,
+        usersCache: new Map(),
+        reposCache: new Map(),
       },
       setSearchQuery: mockSetSearchQuery,
       triggerSearch: mockTriggerSearch,
+      fetchUsers: mockFetchUsers,
+      fetchRepos: mockFetchRepos,
+      selectUser: mockSelectUser,
+      clearSearch: mockClearSearch,
     });
 
     render(<SearchBar />);
@@ -163,10 +176,19 @@ describe("SearchBar Component", () => {
         searchQuery,
         loadingUsers: false,
         users: [],
+        selectedUser: null,
+        repos: [],
+        loadingRepos: false,
         error: null,
+        usersCache: new Map(),
+        reposCache: new Map(),
       },
       setSearchQuery: mockSetSearchQuery,
       triggerSearch: mockTriggerSearch,
+      fetchUsers: mockFetchUsers,
+      fetchRepos: mockFetchRepos,
+      selectUser: mockSelectUser,
+      clearSearch: mockClearSearch,
     });
 
     render(<SearchBar />);
@@ -203,10 +225,19 @@ describe("SearchBar Component", () => {
         searchQuery: "testuser",
         loadingUsers: isLoading,
         users: [],
+        selectedUser: null,
+        repos: [],
+        loadingRepos: false,
         error: null,
+        usersCache: new Map(),
+        reposCache: new Map(),
       },
       setSearchQuery: mockSetSearchQuery,
       triggerSearch: mockTriggerSearch,
+      fetchUsers: mockFetchUsers,
+      fetchRepos: mockFetchRepos,
+      selectUser: mockSelectUser,
+      clearSearch: mockClearSearch,
     }));
 
     render(<SearchBar />);
