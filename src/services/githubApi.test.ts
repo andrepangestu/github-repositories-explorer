@@ -35,7 +35,6 @@ describe("GithubApiService", () => {
         items: [mockUser],
       };
 
-      // Mock the axios instance get method - service expects { data: ... }
       mockAxiosInstance.get.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await GithubApiService.searchUsers("testuser", 5);

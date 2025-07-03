@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { RepositoryList } from "../../components/RepositoryList";
 import { render, mockRepository } from "../test-utils";
 
-// Import the formatNumber function directly from the RepositoryList component
 const formatNumber = (num: number): string => {
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`;
@@ -15,7 +14,6 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-// Mock window.open
 const mockWindowOpen = vi.fn();
 Object.defineProperty(window, "open", {
   writable: true,
@@ -42,13 +40,11 @@ describe("RepositoryList Component", () => {
     expect(screen.getByText("test-repo")).toBeInTheDocument();
     expect(screen.getByText("A test repository")).toBeInTheDocument();
 
-    // Testing for the star count
     const starCountEl = screen.getByText(
       formatNumber(mockRepository.stargazers_count)
     );
     expect(starCountEl).toBeInTheDocument();
 
-    // Check for star icon
     const starIcon =
       document.querySelector('[data-testid="star-icon"]') ||
       document.querySelector(".fill-current");
@@ -116,7 +112,7 @@ describe("RepositoryList Component", () => {
     testCases.forEach(({ count, expected }) => {
       const repo = {
         ...mockRepository,
-        id: count, // Unique id for each test
+        id: count,
         name: `repo-${count}`,
         stargazers_count: count,
       };
@@ -153,7 +149,6 @@ describe("RepositoryList Component", () => {
     expect(screen.getByText("Second repository")).toBeInTheDocument();
     expect(screen.getByText("Third repository")).toBeInTheDocument();
 
-    // Check that all star counts are displayed
     expect(
       screen.getByText(formatNumber(mockRepository.stargazers_count))
     ).toBeInTheDocument();
@@ -171,7 +166,6 @@ describe("RepositoryList Component", () => {
     expect(screen.getByText("test-repo")).toBeInTheDocument();
     expect(screen.queryByText("A test repository")).not.toBeInTheDocument();
 
-    // Stars still shown
     expect(
       screen.getByText(formatNumber(mockRepository.stargazers_count))
     ).toBeInTheDocument();
@@ -210,11 +204,9 @@ describe("RepositoryList Component", () => {
       screen.getByRole("button", { name: /open test-repo on github/i }) ||
       screen.getByText("test-repo");
 
-    // Tab to the repository button
     await user.tab();
     expect(repoButton).toHaveFocus();
 
-    // Press Enter to open
     await user.keyboard("{Enter}");
     expect(mockWindowOpen).toHaveBeenCalledWith(
       mockRepository.html_url,
@@ -232,7 +224,6 @@ describe("RepositoryList Component", () => {
       screen.getByRole("button", { name: /open test-repo on github/i }) ||
       screen.getByText("test-repo");
 
-    // Rapid clicks
     await user.click(repoButton);
     await user.click(repoButton);
     await user.click(repoButton);
@@ -253,11 +244,9 @@ describe("RepositoryList Component", () => {
     ];
     render(<RepositoryList repositories={repositories} />);
 
-    // Check that all repositories are rendered with consistent styling
     const repoContainers = document.querySelectorAll(".bg-gray-50");
     expect(repoContainers).toHaveLength(2);
 
-    // Check that star counts are properly displayed even for zero stars
     expect(screen.getByText("100")).toBeInTheDocument();
     expect(screen.getByText("0")).toBeInTheDocument();
   });
@@ -286,7 +275,6 @@ describe("RepositoryList Component", () => {
 
     expect(screen.getByText("test-repo.js")).toBeInTheDocument();
 
-    // Should still be clickable
     const repoButton =
       screen.getByRole("button", { name: /open test-repo\.js on github/i }) ||
       screen.getByText("test-repo.js");

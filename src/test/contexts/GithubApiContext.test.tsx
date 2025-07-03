@@ -9,8 +9,9 @@ import {
 } from "@testing-library/react";
 import { useGithubApi } from "../../hooks/useGithubApi";
 import { mockUser, mockRepository } from "../test-utils";
+import { GithubApiService } from "../../services/githubApi";
+import { GithubApiProvider } from "../../contexts/GithubApiContext";
 
-// Properly mock the GitHub API service with controlled implementations
 vi.mock("../../services/githubApi", () => ({
   GithubApiService: {
     searchUsers: vi.fn(),
@@ -18,16 +19,10 @@ vi.mock("../../services/githubApi", () => ({
   },
 }));
 
-// Import the mocked service explicitly
-import { GithubApiService } from "../../services/githubApi";
-import { GithubApiProvider } from "../../contexts/GithubApiContext";
-
-// Create a wrapper for tests
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <GithubApiProvider>{children}</GithubApiProvider>
 );
 
-// Helper test component that shows current state
 const TestComponent = () => {
   const { state, setSearchQuery, fetchUsers, selectUser } = useGithubApi();
 
@@ -56,7 +51,6 @@ const TestComponent = () => {
 describe("GithubApiContext", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Default successful mocks
     vi.mocked(GithubApiService.searchUsers).mockResolvedValue([mockUser]);
     vi.mocked(GithubApiService.getUserRepositories).mockResolvedValue([
       mockRepository,
@@ -95,7 +89,6 @@ describe("GithubApiContext", () => {
   });
 
   it("maintains state consistency across multiple consumers", async () => {
-    // Render the test component
     render(
       <>
         <TestComponent />
@@ -104,13 +97,11 @@ describe("GithubApiContext", () => {
       { wrapper }
     );
 
-    // Get all buttons and trigger an action
     const setQueryButtons = screen.getAllByTestId("setQuery");
     await act(async () => {
       setQueryButtons[0].click();
     });
 
-    // Check that both instances show the same state
     const searchQueries = screen.getAllByTestId("searchQuery");
     expect(searchQueries[0].textContent).toBe("testuser");
     expect(searchQueries[1].textContent).toBe("testuser");
@@ -119,7 +110,6 @@ describe("GithubApiContext", () => {
   it("handles reducer actions correctly", async () => {
     render(<TestComponent />, { wrapper });
 
-    // Test SET_SEARCH_QUERY action
     const setQueryButton = screen.getByTestId("setQuery");
     await act(async () => {
       setQueryButton.click();
@@ -127,49 +117,37 @@ describe("GithubApiContext", () => {
 
     expect(screen.getByTestId("searchQuery").textContent).toBe("testuser");
 
-    // Test selectUser action
     const selectUserButton = screen.getByTestId("selectUser");
     await act(async () => {
       selectUserButton.click();
     });
-
-    // We can't easily test selectedUser directly through the DOM, but we could check
-    // for side effects if needed. Here we just verify the action doesn't throw.
   });
 
   it("manages cache state properly", async () => {
-    // Set up explicit mock implementation
     vi.mocked(GithubApiService.searchUsers).mockResolvedValue([mockUser]);
 
     const { result } = renderHook(() => useGithubApi(), { wrapper });
 
-    // Trigger user search
     await act(async () => {
       result.current.fetchUsers("testuser");
     });
 
-    // Wait for the cache to be updated
     await waitFor(() => {
       expect(result.current.state.usersCache.has("testuser")).toBe(true);
     });
 
-    // Reset the mock and verify cache is used
     vi.mocked(GithubApiService.searchUsers).mockClear();
 
-    // Call again, should use cache
     await act(async () => {
       result.current.fetchUsers("testuser");
     });
 
-    // Should not have called the API again
     expect(GithubApiService.searchUsers).not.toHaveBeenCalled();
 
-    // For repositories
     await act(async () => {
       result.current.fetchRepos("testuser");
     });
 
-    // Wait for repo cache to be updated
     await waitFor(() => {
       expect(result.current.state.reposCache.has("testuser")).toBe(true);
     });
@@ -183,13 +161,11 @@ describe("GithubApiContext", () => {
 
     render(<TestComponent />, { wrapper });
 
-    // Trigger the API call that will fail
     const fetchButton = screen.getByTestId("fetchUsers");
     await act(async () => {
       fetchButton.click();
     });
 
-    // Check if the error is displayed
     await waitFor(() => {
       expect(screen.getByTestId("error").textContent).toBe(errorMessage);
     });
@@ -198,7 +174,6 @@ describe("GithubApiContext", () => {
   it("clears state correctly when clearSearch is called", async () => {
     const { result } = renderHook(() => useGithubApi(), { wrapper });
 
-    // Set some state
     await act(async () => {
       result.current.setSearchQuery("testuser");
       result.current.selectUser(mockUser);
@@ -207,7 +182,6 @@ describe("GithubApiContext", () => {
     expect(result.current.state.searchQuery).toBe("testuser");
     expect(result.current.state.selectedUser).toEqual(mockUser);
 
-    // Clear search
     await act(async () => {
       result.current.clearSearch();
     });
@@ -219,7 +193,6 @@ describe("GithubApiContext", () => {
   });
 
   it("manages loading states correctly", async () => {
-    // Create a controlled promise
     let resolveUsers: (value: (typeof mockUser)[]) => void;
     const userPromise = new Promise<(typeof mockUser)[]>((resolve) => {
       resolveUsers = resolve;
@@ -229,22 +202,18 @@ describe("GithubApiContext", () => {
 
     render(<TestComponent />, { wrapper });
 
-    // Start the fetch but don't resolve the promise yet
     const fetchButton = screen.getByTestId("fetchUsers");
 
     fetchButton.click();
 
-    // Wait for the loading state to become true
     await waitFor(() => {
       expect(screen.getByTestId("loading").textContent).toBe("Loading");
     });
 
-    // Now resolve the promise
     await act(async () => {
       resolveUsers!([mockUser]);
     });
 
-    // After the promise resolves, loading should be false
     await waitFor(() => {
       expect(screen.getByTestId("loading").textContent).toBe("Not Loading");
     });
@@ -273,7 +242,6 @@ describe("GithubApiContext", () => {
       clearSearch: result.current.clearSearch,
     };
 
-    // Methods should maintain referential stability
     expect(initialMethods.fetchUsers).toBe(newMethods.fetchUsers);
     expect(initialMethods.fetchRepos).toBe(newMethods.fetchRepos);
     expect(initialMethods.selectUser).toBe(newMethods.selectUser);

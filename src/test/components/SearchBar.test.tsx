@@ -5,7 +5,6 @@ import { SearchBar } from "../../components/SearchBar";
 import { render } from "../test-utils";
 import { useGithubApi } from "../../hooks/useGithubApi";
 
-// Mock the GitHub API hook
 const mockSetSearchQuery = vi.fn();
 const mockTriggerSearch = vi.fn();
 const mockFetchUsers = vi.fn();
@@ -43,7 +42,7 @@ const mockUseGithubApi = vi.mocked(useGithubApi);
 describe("SearchBar Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset to default mock state
+
     mockUseGithubApi.mockReturnValue({
       state: {
         searchQuery: "",
@@ -85,8 +84,7 @@ describe("SearchBar Component", () => {
     const searchInput = screen.getByPlaceholderText("Enter username");
     await user.type(searchInput, "testuser");
 
-    // Should call setSearchQuery for each character
-    expect(mockSetSearchQuery).toHaveBeenCalledTimes(8); // 'testuser' has 8 characters
+    expect(mockSetSearchQuery).toHaveBeenCalledTimes(8);
     expect(mockSetSearchQuery).toHaveBeenLastCalledWith("testuser");
   });
 
@@ -139,7 +137,6 @@ describe("SearchBar Component", () => {
   });
 
   it("shows loading state when searching", () => {
-    // Mock loading state
     mockUseGithubApi.mockReturnValue({
       state: {
         searchQuery: "testuser",
@@ -165,7 +162,6 @@ describe("SearchBar Component", () => {
     expect(screen.getByText("Searching...")).toBeInTheDocument();
     expect(screen.getByRole("button")).toBeDisabled();
 
-    // Should show loading spinner
     expect(document.querySelector(".animate-spin")).toBeInTheDocument();
   });
   it("updates input value when searchQuery state changes", () => {
@@ -203,7 +199,6 @@ describe("SearchBar Component", () => {
 
     const searchInput = screen.getByPlaceholderText("Enter username");
 
-    // Type rapidly
     await user.type(searchInput, "test");
 
     await waitFor(() => {
@@ -214,7 +209,6 @@ describe("SearchBar Component", () => {
   it("prevents double submission on rapid clicks", async () => {
     const user = userEvent.setup();
 
-    // Mock a state where search starts loading immediately
     let isLoading = false;
     mockTriggerSearch.mockImplementation(() => {
       isLoading = true;
@@ -247,11 +241,8 @@ describe("SearchBar Component", () => {
 
     await user.type(searchInput, "testuser");
 
-    // First click should work
     await user.click(searchButton);
 
-    // For now, just verify the trigger was called
-    // In a real app, the button would be disabled after the first click
     expect(mockTriggerSearch).toHaveBeenCalledTimes(1);
   });
 

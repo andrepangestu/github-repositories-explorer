@@ -8,7 +8,6 @@ import {
   createMockSearchResponse,
 } from "../test-utils";
 
-// Mock axios module completely
 vi.mock("axios", () => {
   const mockAxiosInstance = {
     get: vi.fn(),
@@ -35,11 +34,9 @@ describe("GithubApiService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Get the mock axios instance that was created in the mock
     mockAxiosInstance = (mockAxios.create as Mock)();
     mockIsAxiosError = mockAxios.isAxiosError as unknown as Mock;
 
-    // Reset the mock functions
     mockAxiosInstance.get.mockReset();
     mockIsAxiosError.mockReturnValue(false);
   });
@@ -160,8 +157,8 @@ describe("GithubApiService", () => {
       );
 
       mockAxiosInstance.get
-        .mockResolvedValueOnce({ data: firstPageRepos }) // First page (100 items)
-        .mockResolvedValueOnce({ data: secondPageRepos }); // Second page (50 items)
+        .mockResolvedValueOnce({ data: firstPageRepos })
+        .mockResolvedValueOnce({ data: secondPageRepos });
 
       const result = await GithubApiService.getUserRepositories("testuser");
 

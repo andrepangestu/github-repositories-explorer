@@ -1,8 +1,6 @@
 import { useContext } from "react";
-import {
-  GithubApiContext,
-  type GithubApiContextType,
-} from "../contexts/GithubApiContext";
+import { GithubApiContext } from "../contexts/GithubApiContext";
+import type { GithubApiContextType } from "../types/github";
 
 export const useGithubApi = (): GithubApiContextType => {
   const context = useContext(GithubApiContext);

@@ -11,6 +11,7 @@ A modern, responsive React + TypeScript application for exploring GitHub users a
 ## 📋 Table of Contents
 
 - [🚀 Live Demo](#-live-demo)
+- [🎨 Design](#-design)
 - [🌟 Features](#-features)
 - [🛠️ Technology Stack](#️-technology-stack)
 - [🏛️ Architecture & Design Patterns](#️-architecture--design-patterns)
@@ -29,6 +30,20 @@ A modern, responsive React + TypeScript application for exploring GitHub users a
 **[Try the live application here!](https://andrepangestu.github.io/github-repositories-explorer)**
 
 The demo is automatically deployed from the main branch and showcases all the features described in this README.
+
+## 🎨 Design
+
+### Application Wireframe Design
+
+The application follows a clean, user-friendly design based on the following wireframe:
+
+![Application Wireframe](docs/images/design-mock-up.png)
+
+**Design Flow:**
+
+1. **Frame 1**: Initial search interface with clean input field and search button
+2. **Frame 4**: Search results showing list of users matching the query
+3. **Frame 2**: Expanded user view displaying repositories with details (stars, descriptions)
 
 ## 🌟 Features
 
@@ -272,17 +287,17 @@ The project includes comprehensive test coverage:
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all tests in watch mode
 npm test
 
-# Run tests with UI
-npm run test:ui
-
-# Generate coverage report
+# Run tests once with coverage report
 npm run test:coverage
 
-# Run tests in watch mode
-npm run test:watch
+# Run tests once without watch mode
+npm run test:run
+
+# Run tests with verbose output for CI
+npm run test:ci
 ```
 
 ### Test Examples

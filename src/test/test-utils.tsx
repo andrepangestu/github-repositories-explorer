@@ -20,7 +20,6 @@ import { render } from "./custom-render";
 // Test Utilities and Setup
 // =============================================================================
 
-// Export specific items instead of using export * to avoid Fast Refresh errors
 export { render, screen, waitFor, fireEvent, act, within, prettyDOM, queries };
 export { mockAxiosInstance } from "./setup";
 
@@ -237,7 +236,7 @@ export const createMockRepoWithHighStars = (): GithubRepository =>
   createMockRepository({
     id: 1000,
     name: "popular-repo",
-    stargazers_count: 2500000, // 2.5M stars
+    stargazers_count: 2500000,
   });
 
 // =============================================================================

@@ -5,7 +5,6 @@ import App from "../../App";
 import { render, mockUser, mockRepository } from "../test-utils";
 import type { GithubUser } from "../../types/github";
 
-// Mock the GitHub API service
 vi.mock("../../services/githubApi", () => ({
   GithubApiService: {
     searchUsers: vi.fn(),
@@ -42,7 +41,6 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    // Should not show any results for empty search
     expect(screen.queryByText(/showing users for/i)).not.toBeInTheDocument();
   });
 
@@ -57,20 +55,16 @@ describe("App Integration Tests", () => {
 
     render(<App />);
 
-    // Enter search query
     const searchInput = screen.getByPlaceholderText("Enter username");
     await user.type(searchInput, "testuser");
 
-    // Submit search
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    // Wait for search results
     await waitFor(() => {
       expect(screen.getByText(/showing users for/i)).toBeInTheDocument();
     });
 
-    // Mock repositories response
     vi.mocked(GithubApiService.getUserRepositories).mockResolvedValueOnce([
       {
         id: 1,
@@ -90,12 +84,10 @@ describe("App Integration Tests", () => {
       },
     ]);
 
-    // Wait for user to appear and then click to expand
     await waitFor(() => {
       expect(screen.getAllByText("testuser").length).toBeGreaterThan(0);
     });
 
-    // Find and click the user dropdown button
     const userButtons = screen.getAllByText("testuser");
     const userButton = userButtons
       .find((el) =>
@@ -106,7 +98,6 @@ describe("App Integration Tests", () => {
     expect(userButton).not.toBeUndefined();
     await user.click(userButton!);
 
-    // Wait for repository to appear
     await waitFor(() => {
       expect(screen.getByText("test-repo")).toBeInTheDocument();
       expect(screen.getByText("A test repository")).toBeInTheDocument();
@@ -140,7 +131,6 @@ describe("App Integration Tests", () => {
     const user = userEvent.setup();
     const { GithubApiService } = await import("../../services/githubApi");
 
-    // Mock delayed response
     let resolvePromise: ((users: (typeof mockUser)[]) => void) | null = null;
     const delayedPromise = new Promise<(typeof mockUser)[]>((resolve) => {
       resolvePromise = resolve;
@@ -156,14 +146,11 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    // Check for the spinner element directly
     await waitFor(() => {
-      // The spinner should be visible during loading
       const spinner = document.querySelector(".animate-spin");
       expect(spinner).not.toBeNull();
     });
 
-    // Resolve the promise
     resolvePromise!([mockUser]);
 
     await waitFor(() => {
@@ -189,7 +176,6 @@ describe("App Integration Tests", () => {
       expect(screen.queryByText("Searching...")).not.toBeInTheDocument();
     });
 
-    // Should not show user list for empty results
     expect(screen.queryByText(/showing users for/i)).not.toBeInTheDocument();
   });
 
@@ -222,12 +208,10 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    // Just verify the search input retains its value
     await waitFor(() => {
       expect(searchInput).toHaveValue("testuser");
     });
 
-    // Search input should retain the value
     expect(searchInput).toHaveValue("testuser");
   });
 });

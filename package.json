@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "A modern React + TypeScript application for exploring GitHub users and their repositories with real-time search and comprehensive repository details",
+  "description": "A modern React + TypeScript application for exploring GitHub users and their repositories.",
   "keywords": [
     "github",
     "repositories",
@@ -22,9 +22,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/andrepangestu/github-repositories-explorer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/andrepangestu/github-repositories-explorer/issues"
   },
   "homepage": "https://andrepangestu.github.io/github-repositories-explorer",
   "license": "MIT",

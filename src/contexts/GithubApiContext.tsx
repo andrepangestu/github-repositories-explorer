@@ -6,54 +6,12 @@ import React, {
   useMemo,
 } from "react";
 import { GithubApiService } from "../services/githubApi";
-import type { GithubUser, GithubRepository } from "../types/github";
-
-// =============================================================================
-// Types
-// =============================================================================
-
-export interface GithubApiState {
-  searchQuery: string;
-  users: GithubUser[];
-  selectedUser: GithubUser | null;
-  repos: GithubRepository[];
-  loadingUsers: boolean;
-  loadingRepos: boolean;
-  error: string | null;
-  usersCache: Map<string, GithubUser[]>;
-  reposCache: Map<string, GithubRepository[]>;
-}
-
-export type GithubApiAction =
-  | { type: "SET_SEARCH_QUERY"; payload: string }
-  | { type: "SET_USERS"; payload: GithubUser[] }
-  | { type: "SET_SELECTED_USER"; payload: GithubUser | null }
-  | { type: "SET_REPOS"; payload: GithubRepository[] }
-  | { type: "SET_LOADING_USERS"; payload: boolean }
-  | { type: "SET_LOADING_REPOS"; payload: boolean }
-  | { type: "SET_ERROR"; payload: string | null }
-  | { type: "CACHE_USERS"; payload: { query: string; users: GithubUser[] } }
-  | {
-      type: "CACHE_REPOS";
-      payload: { username: string; repos: GithubRepository[] };
-    }
-  | { type: "CLEAR_SEARCH" };
-
-export interface GithubApiContextType {
-  // State
-  state: GithubApiState;
-  // Actions
-  fetchUsers: (query: string) => void;
-  fetchRepos: (username: string) => Promise<void>;
-  selectUser: (user: GithubUser) => void;
-  setSearchQuery: (query: string) => void;
-  triggerSearch: () => void;
-  clearSearch: () => void;
-}
-
-// =============================================================================
-// Initial State
-// =============================================================================
+import type {
+  GithubUser,
+  GithubApiState,
+  GithubApiAction,
+  GithubApiContextType,
+} from "../types/github";
 
 const initialState: GithubApiState = {
   searchQuery: "",
@@ -150,7 +108,6 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Cleanup function for abort controller
   const cleanup = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -162,7 +119,6 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
     }
   }, []);
 
-  // Fetch users with caching and abort controller
   const fetchUsers = useCallback(
     async (query: string) => {
       if (!query.trim()) {
@@ -173,7 +129,6 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
         return;
       }
 
-      // Check cache first
       const cachedUsers = state.usersCache.get(query.toLowerCase());
       if (cachedUsers) {
         dispatch({ type: "SET_USERS", payload: cachedUsers });
@@ -181,10 +136,8 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
         return;
       }
 
-      // Cancel any ongoing request
       cleanup();
 
-      // Create new abort controller
       abortControllerRef.current = new AbortController();
 
       dispatch({ type: "SET_LOADING_USERS", payload: true });
@@ -194,7 +147,6 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
       try {
         const searchResults = await GithubApiService.searchUsers(query, 5);
 
-        // Check if request was aborted
         if (abortControllerRef.current?.signal.aborted) {
           return;
         }
@@ -212,7 +164,6 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
           });
         }
       } catch (err) {
-        // Don't set error if request was aborted
         if (!abortControllerRef.current?.signal.aborted) {
           const errorMessage =
             err instanceof Error
@@ -230,7 +181,6 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
     [state.usersCache, cleanup]
   );
 
-  // Debounced version of fetchUsers
   const debouncedFetchUsers = useCallback(
     (query: string) => {
       if (debounceTimeoutRef.current) {
@@ -239,19 +189,17 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
 
       debounceTimeoutRef.current = setTimeout(() => {
         fetchUsers(query);
-      }, 300); // 300ms debounce
+      }, 300);
     },
     [fetchUsers]
   );
 
-  // Fetch repositories with caching
   const fetchRepos = useCallback(
     async (username: string) => {
       if (!username.trim()) {
         return;
       }
 
-      // Check cache first
       const cachedRepos = state.reposCache.get(username.toLowerCase());
       if (cachedRepos) {
         dispatch({ type: "SET_REPOS", payload: cachedRepos });
@@ -283,17 +231,14 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
     [state.reposCache]
   );
 
-  // Select user
   const selectUser = useCallback((user: GithubUser) => {
     dispatch({ type: "SET_SELECTED_USER", payload: user });
   }, []);
 
-  // Set search query without triggering search
   const setSearchQuery = useCallback((query: string) => {
     dispatch({ type: "SET_SEARCH_QUERY", payload: query });
   }, []);
 
-  // Trigger search manually
   const triggerSearch = useCallback(() => {
     const query = state.searchQuery.trim();
     if (query) {
@@ -304,13 +249,11 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
     }
   }, [state.searchQuery, debouncedFetchUsers]);
 
-  // Clear search
   const clearSearch = useCallback(() => {
     cleanup();
     dispatch({ type: "CLEAR_SEARCH" });
   }, [cleanup]);
 
-  // Context value with useMemo for performance
   const contextValue = useMemo<GithubApiContextType>(
     () => ({
       state,

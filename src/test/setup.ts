@@ -49,6 +49,7 @@ export const mockAxiosInstance = {
   delete: vi.fn(() => Promise.resolve({ data: {} })),
 };
 
+// Mock axios error handling
 export const mockAxios = {
   create: vi.fn(() => mockAxiosInstance),
   isAxiosError: vi.fn(() => false),

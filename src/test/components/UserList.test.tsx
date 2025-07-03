@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { UserList } from "../../components/UserList";
 import { render, mockUser, mockRepository } from "../test-utils";
 
-// Mock the GitHub API hook
 const mockFetchRepos = vi.fn();
 
 const mockUseGithubApi = {
@@ -23,7 +22,6 @@ vi.mock("../../hooks/useGithubApi", () => ({
 describe("UserList Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset the mock state
     mockUseGithubApi.state = {
       searchQuery: "testuser",
       users: [mockUser],
@@ -55,7 +53,6 @@ describe("UserList Component", () => {
 
     render(<UserList />);
 
-    // Component returns null when there are no users
     expect(screen.queryByText(/showing users for/i)).not.toBeInTheDocument();
     expect(screen.queryByText("nonexistent")).not.toBeInTheDocument();
     expect(screen.queryByText("testuser")).not.toBeInTheDocument();
@@ -67,10 +64,8 @@ describe("UserList Component", () => {
 
     const userButton = screen.getByRole("button", { expanded: false });
 
-    // Initially collapsed
     expect(userButton).toHaveAttribute("aria-expanded", "false");
 
-    // Click to expand
     await user.click(userButton);
 
     await waitFor(() => {
@@ -93,7 +88,6 @@ describe("UserList Component", () => {
   it("shows loading state when fetching repositories", async () => {
     const user = userEvent.setup();
 
-    // Mock a loading state by making fetchRepos return a promise that doesn't resolve immediately
     let resolvePromise: () => void;
     const loadingPromise = new Promise<void>((resolve) => {
       resolvePromise = resolve;
@@ -109,7 +103,6 @@ describe("UserList Component", () => {
       expect(screen.getByText("Loading repositories...")).toBeInTheDocument();
     });
 
-    // Resolve the promise to clean up
     resolvePromise!();
   });
 
@@ -125,7 +118,6 @@ describe("UserList Component", () => {
 
     render(<UserList />);
 
-    // The component should display cached data without calling fetchRepos
     expect(mockFetchRepos).not.toHaveBeenCalled();
   });
 
@@ -176,7 +168,6 @@ describe("UserList Component", () => {
     const userButtons = screen.getAllByRole("button", { expanded: false });
     expect(userButtons).toHaveLength(2);
 
-    // Expand first user
     await user.click(userButtons[0]);
 
     await waitFor(() => {
@@ -191,12 +182,10 @@ describe("UserList Component", () => {
 
     const userButton = screen.getByRole("button", { expanded: false });
 
-    // Rapid clicks
     await user.click(userButton);
     await user.click(userButton);
     await user.click(userButton);
 
-    // Should handle rapid state changes without issues
     await waitFor(() => {
       expect(userButton).toHaveAttribute("aria-expanded", "true");
     });
@@ -211,7 +200,6 @@ describe("UserList Component", () => {
 
     render(<UserList />);
 
-    // Should show user count information
     expect(screen.getByText(/showing users for/i)).toBeInTheDocument();
     expect(screen.getAllByText(/testuser/i)[0]).toBeInTheDocument();
   });
@@ -240,7 +228,6 @@ describe("UserList Component", () => {
 
     render(<UserList />);
 
-    // Should not call fetchRepos if data is cached
     expect(mockFetchRepos).not.toHaveBeenCalled();
   });
 
@@ -248,12 +235,10 @@ describe("UserList Component", () => {
     const user = userEvent.setup();
     render(<UserList />);
 
-    // Tab to the user button
     await user.tab();
     const userButton = screen.getByRole("button", { expanded: false });
     expect(userButton).toHaveFocus();
 
-    // Press Enter to expand
     await user.keyboard("{Enter}");
 
     await waitFor(() => {
@@ -285,7 +270,6 @@ describe("UserList Component", () => {
   it("handles component unmounting during async operations", async () => {
     const user = userEvent.setup();
 
-    // Mock a promise that never resolves to simulate ongoing operation
     const neverResolvePromise = new Promise(() => {});
     mockFetchRepos.mockReturnValueOnce(neverResolvePromise);
 
@@ -294,10 +278,8 @@ describe("UserList Component", () => {
     const userButton = screen.getByRole("button", { expanded: false });
     await user.click(userButton);
 
-    // Unmount component during async operation
     unmount();
 
-    // Should not throw any errors
     expect(mockFetchRepos).toHaveBeenCalledWith("testuser");
   });
 });
