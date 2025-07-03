@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "../../App";
@@ -16,6 +16,8 @@ describe("App Integration Tests", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
+  afterEach(() => {});
 
   it("renders the application with search interface", () => {
     render(<App />);
@@ -61,9 +63,12 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    await waitFor(() => {
-      expect(screen.getByText(/showing users for/i)).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/showing users for/i)).toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
 
     vi.mocked(GithubApiService.getUserRepositories).mockResolvedValueOnce([
       {
@@ -122,9 +127,12 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    await waitFor(() => {
-      expect(screen.getByText(errorMessage)).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("shows loading state during search", async () => {
@@ -146,10 +154,13 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    await waitFor(() => {
-      const spinner = document.querySelector(".animate-spin");
-      expect(spinner).not.toBeNull();
-    });
+    await waitFor(
+      () => {
+        const spinner = document.querySelector(".animate-spin");
+        expect(spinner).not.toBeNull();
+      },
+      { timeout: 1000 }
+    );
 
     resolvePromise!([mockUser]);
 
@@ -172,9 +183,12 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    await waitFor(() => {
-      expect(screen.queryByText("Searching...")).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByText("Searching...")).not.toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
 
     expect(screen.queryByText(/showing users for/i)).not.toBeInTheDocument();
   });
@@ -208,10 +222,17 @@ describe("App Integration Tests", () => {
     const searchButton = screen.getByRole("button", { name: /search/i });
     await user.click(searchButton);
 
-    await waitFor(() => {
-      expect(searchInput).toHaveValue("testuser");
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/showing users for/i)).toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
 
     expect(searchInput).toHaveValue("testuser");
+
+    expect(
+      screen.getByRole("button", { name: /testuser/i })
+    ).toBeInTheDocument();
   });
 });

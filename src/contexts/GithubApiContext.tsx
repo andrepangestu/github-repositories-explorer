@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useRef,
   useMemo,
+  useEffect,
 } from "react";
 import { GithubApiService } from "../services/githubApi";
 import type {
@@ -118,6 +119,12 @@ export const GithubApiProvider: React.FC<GithubApiProviderProps> = ({
       debounceTimeoutRef.current = null;
     }
   }, []);
+
+  useEffect(() => {
+    return () => {
+      cleanup();
+    };
+  }, [cleanup]);
 
   const fetchUsers = useCallback(
     async (query: string) => {

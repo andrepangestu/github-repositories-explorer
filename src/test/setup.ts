@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { vi, beforeEach } from "vitest";
+import { vi, beforeEach, afterEach } from "vitest";
 
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
@@ -39,6 +39,11 @@ Object.defineProperty(window, "open", {
 // Global beforeEach to clear mocks
 beforeEach(() => {
   vi.clearAllMocks();
+});
+
+// Global afterEach to clear timers
+afterEach(() => {
+  vi.clearAllTimers();
 });
 
 // Mock axios globally

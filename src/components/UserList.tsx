@@ -30,11 +30,7 @@ export const UserList: React.FC = React.memo(() => {
     setUsersWithRepos((prev) =>
       prev.map((user) => {
         const cachedRepos = state.reposCache.get(user.login.toLowerCase());
-        if (
-          cachedRepos &&
-          user.isExpanded &&
-          user.repositories.length !== cachedRepos.length
-        ) {
+        if (cachedRepos !== undefined && user.isExpanded) {
           return {
             ...user,
             repositories: cachedRepos,
@@ -76,12 +72,13 @@ export const UserList: React.FC = React.memo(() => {
       if (!user) return;
 
       const cachedRepos = state.reposCache.get(user.login.toLowerCase());
-      if (cachedRepos && cachedRepos.length > 0) {
+      if (cachedRepos !== undefined) {
         updateUserRepositories(userId, cachedRepos, false, null);
         return;
       }
 
       try {
+        updateUserRepositories(userId, [], true, null);
         await fetchRepos(user.login);
       } catch (error) {
         const errorMessage =
@@ -106,7 +103,7 @@ export const UserList: React.FC = React.memo(() => {
           if (u.id === userId) {
             if (newExpanded && u.repositories.length === 0) {
               const cachedRepos = state.reposCache.get(u.login.toLowerCase());
-              if (cachedRepos && cachedRepos.length > 0) {
+              if (cachedRepos !== undefined) {
                 return {
                   ...u,
                   isExpanded: newExpanded,
@@ -132,7 +129,7 @@ export const UserList: React.FC = React.memo(() => {
 
       if (newExpanded && user.repositories.length === 0) {
         const cachedRepos = state.reposCache.get(user.login.toLowerCase());
-        if (!cachedRepos || cachedRepos.length === 0) {
+        if (cachedRepos === undefined) {
           loadUserRepositories(userId);
         }
       }
@@ -148,8 +145,8 @@ export const UserList: React.FC = React.memo(() => {
     <div className="w-full mt-6">
       <div className="mb-4">
         <h2 className="text-sm text-gray-700">
-          Showing users for "
-          <span className="font-medium">{state.searchQuery}</span>"
+          Showing users for{" "}
+          <span className="font-medium">"{state.searchQuery}"</span>
         </h2>
       </div>
 

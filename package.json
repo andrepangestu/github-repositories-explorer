@@ -19,10 +19,6 @@
     "name": "Andre Pangestu",
     "email": "andre.pangestu22@gmail.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/andrepangestu/github-repositories-explorer.git"
-  },
   "homepage": "https://andrepangestu.github.io/github-repositories-explorer",
   "license": "MIT",
   "engines": {
