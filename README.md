@@ -232,45 +232,66 @@ GET https://api.github.com/users/{username}/repos?sort=updated&direction=desc
 
 ```
 github-repositories-explorer/
-├── public/                     # Static assets
-│   └── vite.svg               # Vite logo
-├── src/                       # Source code
-│   ├── components/            # React components
+├── .github/                   # GitHub configuration
+│   └── workflows/            # GitHub Actions workflows
+│       └── deploy.yml        # Automated deployment to GitHub Pages
+├── public/                   # Static assets
+│   └── github.svg             # Github logo favicon
+├── src/                     # Source code
+│   ├── components/          # React components
 │   │   ├── RepositoryList.tsx # Repository display component
-│   │   ├── SearchBar.tsx      # Search input component
-│   │   ├── UserDropdown.tsx   # User dropdown component
-│   │   └── UserList.tsx       # User list component
-│   ├── contexts/             # React contexts
-│   │   └── GithubApiContext.tsx # GitHub API context
-│   ├── hooks/                # Custom React hooks
-│   │   └── useGithubApi.ts   # GitHub API custom hook
-│   ├── services/             # API services
-│   │   └── githubApi.ts      # GitHub API integration
-│   ├── types/                # TypeScript definitions
-│   │   └── github.ts         # GitHub API types
-│   ├── test/                 # Test files
-│   │   ├── setup.ts          # Test setup configuration
-│   │   └── App.test.tsx      # App component tests
-│   ├── application/          # Application layer (Domain-driven design)
-│   ├── domain/               # Domain layer (Business logic)
-│   ├── utils/                # Utility functions
-│   ├── App.tsx               # Main application component
-│   ├── main.tsx              # Application entry point
-│   ├── index.css             # Global styles with Tailwind
-│   └── vite-env.d.ts         # Vite type definitions
-├── docs/                     # Documentation and images
-│   └── images/               # Documentation images
-├── dist/                     # Production build (generated)
-├── node_modules/             # Dependencies (generated)
-├── eslint.config.js          # ESLint configuration
-├── tailwind.config.js        # Tailwind CSS configuration
-├── postcss.config.js         # PostCSS configuration
-├── tsconfig.json             # TypeScript configuration
-├── tsconfig.app.json         # TypeScript app configuration
-├── tsconfig.node.json        # TypeScript Node configuration
-├── vite.config.ts            # Vite configuration
-├── package.json              # Project metadata and dependencies
-└── README.md                 # This documentation
+│   │   ├── SearchBar.tsx     # Search input component
+│   │   ├── UserDropdown.tsx  # User dropdown component
+│   │   └── UserList.tsx      # User list component
+│   ├── contexts/            # React contexts
+│   │   └── GithubApiContext.tsx # GitHub API context provider
+│   ├── hooks/               # Custom React hooks
+│   │   └── useGithubApi.ts  # GitHub API custom hook
+│   ├── services/            # API services
+│   │   └── githubApi.ts     # GitHub API integration layer
+│   ├── types/               # TypeScript definitions
+│   │   └── github.ts        # GitHub API type definitions
+│   ├── test/                # Test files organized by feature
+│   │   ├── components/      # Component tests
+│   │   │   ├── RepositoryList.test.tsx
+│   │   │   ├── SearchBar.test.tsx
+│   │   │   ├── UserDropdown.test.tsx
+│   │   │   └── UserList.test.tsx
+│   │   ├── contexts/        # Context tests
+│   │   │   └── GithubApiContext.test.tsx
+│   │   ├── hooks/           # Hook tests
+│   │   │   └── useGithubApi.test.tsx
+│   │   ├── integration/     # Integration tests
+│   │   │   └── App.test.tsx
+│   │   ├── services/        # Service tests
+│   │   │   └── githubApi.test.ts
+│   │   ├── custom-render.tsx # Custom render utilities
+│   │   ├── setup.ts         # Test setup configuration
+│   │   ├── test-providers.tsx # Test context providers
+│   │   └── test-utils.tsx   # Test utility functions
+│   ├── App.tsx              # Main application component
+│   ├── main.tsx             # Application entry point
+│   ├── index.css            # Global styles with Tailwind
+│   └── vite-env.d.ts        # Vite type definitions
+├── coverage/                # Test coverage reports (generated)
+├── docs/                    # Documentation and assets
+│   └── images/              # Documentation images
+│       └── design-mock-up.png # Application design mockup
+├── dist/                    # Production build output (generated)
+├── node_modules/            # Dependencies (generated)
+├── .gitignore               # Git ignore configuration
+├── .vscode/                 # VS Code workspace settings
+├── eslint.config.js         # ESLint configuration (flat config)
+├── index.html               # HTML template entry point
+├── package.json             # Project metadata and dependencies
+├── package-lock.json        # Dependency lock file
+├── postcss.config.js        # PostCSS configuration
+├── README.md                # Project documentation (this file)
+├── tailwind.config.js       # Tailwind CSS configuration
+├── tsconfig.json            # Main TypeScript configuration
+├── tsconfig.app.json        # TypeScript app-specific configuration
+├── tsconfig.node.json       # TypeScript Node.js configuration
+└── vite.config.ts           # Vite configuration with testing setup
 ```
 
 ## 🧪 Testing
